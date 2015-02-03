@@ -11,9 +11,13 @@ socketio = SocketIO(app)
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404
 
-@app.route("/")
+@app.route("/cinema")
 def hello():
 	return render_template("cinema.html")
+
+@app.route("/profile")
+def profile():
+    return render_template("usr.html")
 	
 @app.route("/search",methods=["GET","POST"])
 def search():
@@ -33,6 +37,7 @@ def test_message(message):
     emit('client response', {'data': 111 })
     room=111
     join_room(room)
+    random.getStatus()
     print('request host');
 
 @socketio.on('my broadcast event', namespace='/test')
