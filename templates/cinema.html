@@ -1,0 +1,31 @@
+{% extends "index.html" %} {% block cinema %}
+<div class="col-sm-2 col-md-2">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<a href="#" onclick="toggleEvent()">Room Info</a>
+		</div>
+		<div id="event-table" class="panel-body">
+			<div class="row" id="event-table-detail">
+				<div class= "col-sm-1 col-md-1" >
+					#
+				</div>
+				<div class=" col-sm-10 col-md-10 ">
+					<input type="text" class="form-control" id="set_account" readonly>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-sm-10 col-md-10">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<a href="#" onclick="toggleEvent()">My Profile</a>
+		</div>
+		<div id="event-table" class="panel-body">
+			<div class="row" id="event-table-detail">
+				<div class="col-sm-4 col-md-4"></div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

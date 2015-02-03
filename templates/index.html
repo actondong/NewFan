@@ -1,0 +1,72 @@
+<!doctype html>
+<html class="no-js" lang="en" > 
+<head>
+<script type="text/javascript" src="{{url_for('static', filename='js/jquery-2.1.3.js')}}"></script>
+<link rel="stylesheet" type="text/css" media="screen"
+	href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
+<link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='css/semantic.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='css/background.css')}}" rel="stylesheet">
+<script type="text/javascript" src="{{url_for('static', filename='js/moment.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/semantic.js')}}"></script>
+<script type="text/javascript"
+	src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/src/js/bootstrap-datetimepicker.js"></script>
+<title>Hello from Flask</title>
+</head>
+<body>
+<nav class="navbar navbar-inverse" role="navigation">
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">Group Up</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse"
+			id="bs-example-navbar-collapse-1">
+			<div class="navbar-form navbar-left">
+				<ul id="nav" class="nav nav-tabs">
+					<li id="homePage" role="presentation" class="active"><a
+						href="#" onclick="setHomePage()">Home</a></li>
+					<li id="profile" role="presentation"><a href="#"
+						onclick="setProfile()">Profile</a></li>
+					<li id="events" role="presentation"><a href="#"
+						onclick="setEvents()">Events</a></li>
+					<li id="message" role="presentation"><a href="#"
+						onclick="setMessage()" style="display: none">Messages</a></li>
+				</ul>
+			</div>
+
+			<div class="navbar-form navbar-right">
+				<div class="form-group" id="undiv">
+					<input type="text" class="form-control" id="username"
+						placeholder="Username(Email)">
+				</div>
+				<div class="form-group" id="pwdiv">
+					<input type="password" class="form-control" id="password"
+						placeholder="Password">
+				</div>
+				<div class="form-group">
+					<button class="btn btn-primary" onclick="loadXMLDoc()" id="signin">SignIn</button>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-success" onclick="singup()" id="signup">SignUp</button>
+				</div>
+				<div class="form-group" id="logout">
+					<button class="btn btn-danger" onclick="logout()">Log out
+					</button>
+				</div>
+			</div>
+		</div>
+		<!-- /.navbar-collapse -->
+	</div>
+	<!-- /.container-fluid --> </nav>
+	{% block cinema %}{% endblock %}
+</body>
+</html>

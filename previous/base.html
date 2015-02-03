@@ -1,0 +1,33 @@
+<!DOCTYPE html> 
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]--> 
+<html lang="en" > 
+
+<head> 
+  <meta charset="utf-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>{% block title %}{%endblock%}</title> 
+
+  <!-- If you are using CSS version, only link these 2 files, you may add app.css to use for your overrides if you like. --> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}"> 
+  <!-- If you are using the gem version, you need this only --> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script> 
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script> 
+  <script src="{{ url_for('static', filename='js/npm.js') }}"></script> 
+
+  <script> 
+    $(document).bootstrap(); 
+  </script> 
+  {% block localscript %}{% endblock %}
+</head> 
+<body> 
+  <!-- body content here --> 
+  {% block body %}{% endblock %}
+</body> 
+</html>
+

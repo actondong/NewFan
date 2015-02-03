@@ -1,0 +1,20 @@
+{% extends "usr_template.html" %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		{% block profile %}
+		<ul>
+		{% for friend in api_data["friends"] %}	
+			<li>
+				<h3>{{ friend.name }} </h3>		
+				<p>{{ friend.signature}}</p>
+			</li>
+		{% endfor %}
+		</ul>	
+		{% endblock %}
+	</body>
+</html>
