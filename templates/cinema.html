@@ -1,29 +1,109 @@
 {% extends "index.html" %} {% block cinema %}
-<div class="col-sm-2 col-md-2">
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+<script>
+		var namespace = '/test';
+	  	var socket = io.connect('http://127.0.0.1:8080'+namespace);
+	  	socket.on('connect', function() {
+	        var status = document.getElementById("status");
+	    	status.value='connected!';
+	        //socket.emit('my event', {data: 'I\'m connected!'});
+	    });
+	    socket.on('client response', function(msg){
+	    	var roomNumber = document.getElementById("room_number");
+	    	roomNumber.value=msg.data;
+	    });
+  /////////// easy to hash
+	  String.prototype.hashCode = function() {
+	    var hash = 0, i, chr, len;
+	    if (this.length == 0)
+	      return hash;
+	    for (i = 0, len = this.length; i < len; i++) {
+	      chr = this.charCodeAt(i);
+	      hash = ((hash << 5) - hash) + chr;
+	      hash |= 0; // Convert to 32bit integer
+	    }
+	    return hash;
+	  };
+
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '100%',
+          width: '100%',
+          videoId: 'M7lc1UVf-VE',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
+      // 5. The API calls this function when the player's state changes.
+      //    The function indicates that when playing a video (state=1),
+      //    the player should play for six seconds and then stop.
+      var done = false;
+      function onPlayerStateChange(event) {
+        //alert("sdsds");
+        if (event.data == YT.PlayerState.PLAYING && !done) {
+          setTimeout(stopVideo, 6000);
+          done = true;
+        }
+      }
+      function stopVideo() {
+        player.stopVideo();
+      }
+</script>
+<script>
+	function requestHost(){
+		socket.emit('request host',{data: 'whatever'});
+	}
+</script>
+<div class="col-sm-4 col-md-4">
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<a href="#" onclick="toggleEvent()">Room Info</a>
 		</div>
 		<div id="event-table" class="panel-body">
 			<div class="row" id="event-table-detail">
+				<div class=" col-sm-12 col-md-12 ">
+					<input type="text" class="form-control" id="status" readonly>
+				</div>
 				<div class= "col-sm-1 col-md-1" >
 					#
 				</div>
 				<div class=" col-sm-10 col-md-10 ">
-					<input type="text" class="form-control" id="set_account" readonly>
+					<input type="text" class="form-control" id="room_number" readonly>
+				</div>
+				<div class=" col-sm-12 col-md-12 ">
+					<button class="btn btn-primary" onclick="requestHost()">Host</button>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-<div class="col-sm-10 col-md-10">
+<div class="col-sm-8 col-md-8">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<a href="#" onclick="toggleEvent()">My Profile</a>
+			<a href="#" onclick="toggleEvent()">Movie</a>
 		</div>
 		<div id="event-table" class="panel-body">
 			<div class="row" id="event-table-detail">
-				<div class="col-sm-4 col-md-4"></div>
+				<div class="col-sm-12 col-md-12" style="height:500px">
+					<div id="player"></div>
+				</div>
 			</div>
 		</div>
 	</div>

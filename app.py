@@ -28,6 +28,13 @@ def search():
 def test_message(message):
     emit('rome', {'data': 'romeeeee'},broadcast=True)
 
+@socketio.on('request host', namespace='/test')
+def test_message(message):
+    emit('client response', {'data': 111 })
+    room=111
+    join_room(room)
+    print('request host');
+
 @socketio.on('my broadcast event', namespace='/test')
 def test_message(message):
     emit('my response', {'data': message['data']}, broadcast=True)
