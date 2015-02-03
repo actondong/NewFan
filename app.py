@@ -1,4 +1,5 @@
 from flask import Flask, jsonify,render_template,request
+from random import randint
 import requests
 import sys
 from flask.ext.socketio import join_room, leave_room
@@ -34,11 +35,33 @@ def test_message(message):
 
 @socketio.on('request host', namespace='/test')
 def test_message(message):
-    emit('client response', {'data': 111 })
-    room=111
+    room = str(randint(1,1000))
+    emit('host confirm', {'data':room})
     join_room(room)
-    random.getStatus()
-    print('request host');
+    print('request host')
+
+@socketio.on('request join', namespace='/test')
+def test_message(message):
+    room = message['data']
+    join_room(room)
+    emit('join confirm', {'data': 'success'})
+    print('request join')
+
+@socketio.on('video status change', namespace='/test')
+def video_change(message):
+    currTime = message['currTime']
+    room = message['room']
+    stop = message['stop']
+    currTime = message['currTime']
+    print(message['identifier']);
+    emit('change video', {'stop': stop,'currTime': currTime, 'identifier': message['identifier']}, room=room)
+
+@socketio.on('room chat', namespace='/test')
+def room_chat(message):
+    room = message['room']
+    data = message['data']
+    print(room)
+    emit('test Only', {'data': 'sds'}, room=room)
 
 @socketio.on('my broadcast event', namespace='/test')
 def test_message(message):

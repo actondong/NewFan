@@ -1,16 +1,45 @@
 {% extends "index.html" %} {% block cinema %}
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
 <script>
+		function currentTime(){
+			date = new Date();
+			return date.getTime();
+		}
 		var namespace = '/test';
 	  	var socket = io.connect('http://127.0.0.1:8080'+namespace);
+	  	var identifier = Math.random();
+	  	var preTime = currentTime();
 	  	socket.on('connect', function() {
 	        var status = document.getElementById("status");
 	    	status.value='connected!';
 	        //socket.emit('my event', {data: 'I\'m connected!'});
 	    });
-	    socket.on('client response', function(msg){
+	    socket.on('host confirm', function(msg){
 	    	var roomNumber = document.getElementById("room_number");
 	    	roomNumber.value=msg.data;
+	    	roomNumber.readOnly=true;
+	    });
+	    socket.on('join confirm', function(msg){
+	    	roomNumber = document.getElementById("room_number");
+	    	roomNumber.readOnly=true;
+	    });
+	    socket.on('test Only', function(msg){
+	    	alert(msg.data);
+	    });
+	    socket.on('change video', function(msg){
+	    	if(msg.identifier!=identifier){
+	    		currTime = player.getCurrentTime();
+	    		targetTime = msg.currTime;
+	    		if(Math.abs(currTime-targetTime)>0.3){
+	    			player.seekTo(targetTime+0.2);
+	    		}
+	    		if(msg.stop==true){
+	    			player.pauseVideo();
+	    		}else{
+	    			player.playVideo();
+	    		}
+	    		preTime = date.getTime();
+	    	}
 	    });
   /////////// easy to hash
 	  String.prototype.hashCode = function() {
@@ -57,6 +86,20 @@
       var done = false;
       function onPlayerStateChange(event) {
         //alert("sdsds");
+        /*currTime = player.getCurrentTime();
+        var stop = false;
+        if(player.getPlayerState()==2){
+        	stop = true;
+    	}
+        videoChange(currTime, stop);*/
+        currTime = player.getCurrentTime();
+        if(event.data == 2){
+        	player.pauseVideo();
+        	videoChange(currTime, true, identifier);
+        }
+        if(event.data == 1){
+        	videoChange(currTime, false, identifier);
+        }
         if (event.data == YT.PlayerState.PLAYING && !done) {
           setTimeout(stopVideo, 6000);
           done = true;
@@ -69,6 +112,18 @@
 <script>
 	function requestHost(){
 		socket.emit('request host',{data: 'whatever'});
+	}
+	function requestJoin(){
+		number = document.getElementById("room_number").value;
+		socket.emit('request join',{data: number});
+	}
+	function requestInvite(){
+		room_number = document.getElementById("room_number").value;
+		socket.emit('room chat',{data: 'hehah',room: room_number});
+	}
+	function videoChange(currTime,stop,identifier){
+		room_number = document.getElementById("room_number").value;
+		socket.emit('video status change',{currTime: currTime, stop: stop, room: room_number, identifier: identifier});
 	}
 </script>
 <div class="col-sm-4 col-md-4">
@@ -85,10 +140,16 @@
 					#
 				</div>
 				<div class=" col-sm-10 col-md-10 ">
-					<input type="text" class="form-control" id="room_number" readonly>
+					<input type="text" class="form-control" id="room_number">
 				</div>
 				<div class=" col-sm-12 col-md-12 ">
 					<button class="btn btn-primary" onclick="requestHost()">Host</button>
+				</div>
+				<div class=" col-sm-12 col-md-12 ">
+					<button class="btn btn-primary" onclick="requestJoin()">Join</button>
+				</div>
+				<div class=" col-sm-12 col-md-12 ">
+					<button class="btn btn-primary" onclick="requestInvite()">Invite</button>
 				</div>
 			</div>
 		</div>
