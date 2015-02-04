@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify,render_template,request,session
+from flask import Flask, jsonify,render_template,request,session,redirect
 from random import randint
 import requests
 import sys
@@ -16,11 +16,17 @@ def page_not_found(error):
 
 @app.route("/")
 def hello():
-    return render_template("cinema.html",myUserName='rome')
+	if 'username' in session:
+    		return render_template("cinema.html",myUserName=session['username'])
+	else:
+		return render_template("cinema.html",myUserName='Guest')
     #else:
       #  print("what the fuck")
        # return render_template("index.html")
 
+    #else:
+      #  print("what the fuck")
+       # return render_template("index.html")
 
 @app.route('/login',  methods=['POST', 'GET'])
 def login():
@@ -30,12 +36,12 @@ def login():
                        request.form['password']):
 			session['username']=request.form['username']
 			session['logged_in']=True
-			return render_template('cinema.html', error=error, myUserName=session['username'])
+			return redirect('/')
         else:
             error = 'Invalid username/password'
     # the code below is executed if the request method
     # was GET or the credentials were invalid
-    return render_template('cinema.html', error=error, myUserNmae=session['username'])
+    return redirect('/')
 
 @app.route('/signup',  methods=['POST', 'GET'])
 def signup():
@@ -45,19 +51,19 @@ def signup():
                        request.form['password']):
 			session['username']=request.form['username']
 			session['logged_in']=True
-			return render_template('cinema.html', error=error, myUserName=session['username'])
+			return redirect('/')
         else:
             error = 'Invalid username/password'
     # the code below is executed if the request method
     # was GET or the credentials were invalid
-    return render_template('cinema.html', error=error, myUserName=session['username'])
+    return redirect('/')
 
 
 @app.route('/logout',  methods=['POST', 'GET'])
 def logout():
 	error = None
 	session.clear()
-	return render_template('cinema.html', error=error)
+	return redirect('/')
 
 @app.route("/search",methods=["GET","POST"])
 def search():
