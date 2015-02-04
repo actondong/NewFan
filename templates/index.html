@@ -44,24 +44,25 @@
 			</div>
 
 			<div class="navbar-form navbar-right">
-				<div class="form-group" id="undiv">
-					<input type="text" class="form-control" id="username"
-						placeholder="Username(Email)">
-				</div>
-				<div class="form-group" id="pwdiv">
-					<input type="password" class="form-control" id="password"
-						placeholder="Password">
-				</div>
-				<div class="form-group">
-					<button class="btn btn-primary" onclick="loadXMLDoc()" id="signin">SignIn</button>
-				</div>
-				<div class="form-group">
-					<button class="btn btn-success" onclick="singup()" id="signup">SignUp</button>
-				</div>
-				<div class="form-group" id="logout">
-					<button class="btn btn-danger" onclick="logout()">Log out
-					</button>
-				</div>
+				{% if not session.logged_in %}
+				<form name="MyForm" method=post>
+				    
+				      <input type="text" class="form-control"
+						placeholder="Username(Email)" name=username>
+				      <input type="password" class="form-control"
+						placeholder="Password" name=password>
+			<input type=submit value=Login class="btn btn-primary" OnClick="document.forms['MyForm'].action = '/login'" >
+			<input type=submit value=Signup class="btn btn-success" OnClick="document.forms['MyForm'].action = '/signup'" >
+				  </form>
+
+
+ 				{% else %}
+				<form action='logout' method=post>
+				    
+				      <input type=submit value=Logout class="btn btn-danger">
+				    
+				  </form>
+  				{% endif %}
 			</div>
 		</div>
 		<!-- /.navbar-collapse -->
