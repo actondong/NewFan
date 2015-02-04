@@ -1,16 +1,53 @@
 {% extends "index.html" %} {% block cinema %}
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
 <script>
+		function currentTime(){
+			date = new Date();
+			return date.getTime();
+		}
 		var namespace = '/test';
 	  	var socket = io.connect('http://127.0.0.1:8080'+namespace);
+	  	var identifier = Math.random();
+	  	var host = false;
 	  	socket.on('connect', function() {
 	        var status = document.getElementById("status");
 	    	status.value='connected!';
 	        //socket.emit('my event', {data: 'I\'m connected!'});
 	    });
-	    socket.on('client response', function(msg){
+	    socket.on('host confirm', function(msg){
 	    	var roomNumber = document.getElementById("room_number");
+	    	host=true;
 	    	roomNumber.value=msg.data;
+	    	roomNumber.readOnly=true;
+	    });
+	    socket.on('join confirm', function(msg){
+	    	roomNumber = document.getElementById("room_number");
+	    	roomNumber.readOnly=true;
+	    });
+	    socket.on('pause for new', function(){
+	    	if(host){
+	    		player.pauseVideo();
+	    	}
+	    });
+	    socket.on('test Only', function(msg){
+	    	alert(msg.data);
+	    });
+	    socket.on('chat message receive', function(msg){
+	    	appendChat(msg.data);
+	    });
+	    socket.on('change video', function(msg){
+	    	if(msg.identifier!=identifier){
+	    		currTime = player.getCurrentTime();
+	    		targetTime = msg.currTime;
+	    		if(Math.abs(currTime-targetTime)>0.3){
+	    			player.seekTo(targetTime+0.2);
+	    		}
+	    		if(msg.stop==true){
+	    			player.pauseVideo();
+	    		}else{
+	    			player.playVideo();
+	    		}
+	    	}
 	    });
   /////////// easy to hash
 	  String.prototype.hashCode = function() {
@@ -57,6 +94,20 @@
       var done = false;
       function onPlayerStateChange(event) {
         //alert("sdsds");
+        /*currTime = player.getCurrentTime();
+        var stop = false;
+        if(player.getPlayerState()==2){
+        	stop = true;
+    	}
+        videoChange(currTime, stop);*/
+        currTime = player.getCurrentTime();
+        if(event.data == 2){
+        	player.pauseVideo();
+        	videoChange(currTime, true, identifier);
+        }
+        if(event.data == 1){
+        	videoChange(currTime, false, identifier);
+        }
         if (event.data == YT.PlayerState.PLAYING && !done) {
           setTimeout(stopVideo, 6000);
           done = true;
@@ -69,6 +120,18 @@
 <script>
 	function requestHost(){
 		socket.emit('request host',{data: 'whatever'});
+	}
+	function requestJoin(){
+		number = document.getElementById("room_number").value;
+		socket.emit('request join',{data: number});
+	}
+	function requestInvite(){
+		room_number = document.getElementById("room_number").value;
+		socket.emit('room chat',{data: 'hehah',room: room_number});
+	}
+	function videoChange(currTime,stop,identifier){
+		room_number = document.getElementById("room_number").value;
+		socket.emit('video status change',{currTime: currTime, stop: stop, room: room_number, identifier: identifier});
 	}
 </script>
 <div class="col-sm-4 col-md-4">
@@ -85,11 +148,32 @@
 					#
 				</div>
 				<div class=" col-sm-10 col-md-10 ">
-					<input type="text" class="form-control" id="room_number" readonly>
+					<input type="text" class="form-control" id="room_number">
 				</div>
 				<div class=" col-sm-12 col-md-12 ">
 					<button class="btn btn-primary" onclick="requestHost()">Host</button>
 				</div>
+				<div class=" col-sm-12 col-md-12 ">
+					<button class="btn btn-primary" onclick="requestJoin()">Join</button>
+				</div>
+				<div class=" col-sm-12 col-md-12 ">
+					<button class="btn btn-primary" onclick="requestInvite()">Invite</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<a href="#" onclick="toggleEvent()">Chat room</a>
+		</div>
+		<div id="event-table" class="panel-body">
+			<div id="scrollable" style="overflow: scroll;height: 195px; margin: 0px 0px 10px 5px">
+			</div>
+			<div class=" col-sm-10 col-md-10 " style="padding:0px 0px">
+				<input type="text" class="form-control" id="chat_message">
+			</div>
+			<div class=" col-sm-2 col-md-2 " style="padding:0px 10px">
+				<button class="btn btn-primary" onclick="sendMessage()">Send</button>
 			</div>
 		</div>
 	</div>
@@ -108,4 +192,21 @@
 		</div>
 	</div>
 </div>
+<script>
+	//roll scroll bar
+	function scrollDown(divId){
+		a = document.getElementById(divId);
+		a.scrollTop=a.scrollHeight;
+	}
+	function sendMessage(){
+		text = document.getElementById('chat_message').value;
+		room_number = document.getElementById("room_number").value;
+		socket.emit('chat broadcast',{data: text,room: room_number});
+	}
+	function appendChat(msg){
+		d = document.getElementById('scrollable');
+		d.innerHTML = d.innerHTML+msg+"<br>";
+		d.scrollTop=d.scrollHeight;
+	}
+</script>
 {% endblock %}

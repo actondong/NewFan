@@ -1,4 +1,6 @@
+
 from flask import Flask, jsonify,render_template,request,session
+from random import randint
 import requests
 import sys
 from flask.ext.socketio import join_room, leave_room
@@ -7,7 +9,7 @@ import db
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
-
+roomCurrTime={}
 @app.errorhandler(404)
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404
@@ -65,6 +67,44 @@ def search():
 @socketio.on('my event', namespace='/test')
 def test_message(message):
     emit('rome', {'data': 'romeeeee'},broadcast=True)
+
+@socketio.on('request host', namespace='/test')
+def test_message(message):
+    room = str(randint(1,1000))
+    emit('host confirm', {'data':room})
+    join_room(room)
+    print('request host')
+
+@socketio.on('request join', namespace='/test')
+def test_message(message):
+    room = message['data']
+    join_room(room)
+    emit('join confirm', {'data': 'success'})
+    emit('pause for new',{'data': 'pause'},room=room)
+    print('request join')
+
+@socketio.on('video status change', namespace='/test')
+def video_change(message):
+    currTime = message['currTime']
+    room = message['room']
+    roomCurrTime[room]=currTime
+    stop = message['stop']
+    currTime = message['currTime']
+    print(message['identifier']);
+    emit('change video', {'stop': stop,'currTime': currTime, 'identifier': message['identifier']}, room=room)
+
+@socketio.on('room chat', namespace='/test')
+def room_chat(message):
+    room = message['room']
+    data = message['data']
+    print(room)
+    emit('test Only', {'data': 'sds'}, room=room)
+
+@socketio.on('chat broadcast', namespace='/test')
+def room_chat(message):
+    room = message['room']
+    data = message['data']
+    emit('chat message receive', {'data': data}, room=room)
 
 @socketio.on('my broadcast event', namespace='/test')
 def test_message(message):
