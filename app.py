@@ -14,19 +14,20 @@ roomCurrTime={}
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404
 
-@app.route("/")
+@app.route("/index")
 def hello():
 	if 'username' in session:
     		return render_template("cinema.html",myUserName=session['username'])
 	else:
 		return render_template("cinema.html",myUserName='Guest')
-    #else:
-      #  print("what the fuck")
-       # return render_template("index.html")
 
-    #else:
-      #  print("what the fuck")
-       # return render_template("index.html")
+@app.route("/")
+def home():
+	if 'username' in session:
+    		return render_template("cinema.html",myUserName=session['username'])
+	else:
+		return render_template("homepage.html")
+
 
 @app.route('/login',  methods=['POST', 'GET'])
 def login():
@@ -41,7 +42,7 @@ def login():
             error = 'Invalid username/password'
     # the code below is executed if the request method
     # was GET or the credentials were invalid
-    return redirect('/')
+    return redirect('/index')
 
 @app.route('/signup',  methods=['POST', 'GET'])
 def signup():
@@ -56,7 +57,7 @@ def signup():
             error = 'Invalid username/password'
     # the code below is executed if the request method
     # was GET or the credentials were invalid
-    return redirect('/')
+    return redirect('/index')
 
 
 @app.route('/logout',  methods=['POST', 'GET'])
