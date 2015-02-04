@@ -139,23 +139,21 @@
 		</div>
 		<div id="event-table" class="panel-body">
 			<div class="row" id="event-table-detail">
-				<div class= "col-sm-1 col-md-1" >
-					#
-				</div>
-				<div class=" col-sm-10 col-md-10 ">
+				<div class=" col-sm-12 col-md-12 " >
 					<input type="text" class="form-control" id="room_number">
 				</div>
 				<div class=" col-sm-12 col-md-12">
-				<div class=" col-sm-6 col-md-6">
-					<button class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
-				</div>
-				<div class=" col-sm-6 col-md-6">
-					<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">Join</button>
-				</div>
+					<div class=" col-sm-6 col-md-6">
+						<button class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
+					</div>
+					<div class=" col-sm-6 col-md-6">
+						<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">Join</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	<div class="panel panel-default">
 		<div class="panel-heading" style="background: url({{url_for('static', filename='background/bar.jpeg')}}) no-repeat; background-size: 100% 100%">
 			<a href="#" onclick="toggleEvent()">Chat room</a>
@@ -189,6 +187,29 @@
 		</div>
 	</div>
 </div>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 	//roll scroll bar
 	function scrollDown(divId){
@@ -203,11 +224,11 @@
 	function appendChat(msg){
 		$chatWindow = $('#chatresponse');
 		var $messageLine = '<div class="comment"><a class="avatar"><img src="http://i60.tinypic.com/34ik10y.png"></a><div class="content"><a class="author">'
-				+ '{{myUserName}}'
+				+ msg.substring(0,msg.indexOf(':'))
 				+ '</a><div class="metadata"><span class="date">'
 				+ new Date().toLocaleTimeString()
 				+ '</span></div><div class="text">'
-				+ msg
+				+ msg.substring(msg.indexOf(':')+1)
 				+ '</div></div></div>';
 		$chatWindow.append($messageLine);
 		document.getElementById('scrollable').scrollTop=document.getElementById('scrollable').scrollHeight;
