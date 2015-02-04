@@ -205,7 +205,7 @@
 	}
 	function appendChat(msg){
 		d = document.getElementById('scrollable');
-		d.innerHTML = d.innerHTML+msg+"<br>";
+		d.innerHTML = d.innerHTML+'{{myUserName}}'+': '+msg+"<br>";
 		d.scrollTop=d.scrollHeight;
 	}
 </script>

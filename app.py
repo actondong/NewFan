@@ -16,7 +16,11 @@ def page_not_found(error):
 
 @app.route("/")
 def hello():
-	return render_template("cinema.html")
+    return render_template("cinema.html",myUserName='rome')
+    #else:
+      #  print("what the fuck")
+       # return render_template("index.html")
+
 
 @app.route('/login',  methods=['POST', 'GET'])
 def login():
@@ -26,12 +30,12 @@ def login():
                        request.form['password']):
 			session['username']=request.form['username']
 			session['logged_in']=True
-			return render_template('cinema.html', error=error)
+			return render_template('cinema.html', error=error, myUserName=session['username'])
         else:
             error = 'Invalid username/password'
     # the code below is executed if the request method
     # was GET or the credentials were invalid
-    return render_template('cinema.html', error=error)
+    return render_template('cinema.html', error=error, myUserNmae=session['username'])
 
 @app.route('/signup',  methods=['POST', 'GET'])
 def signup():
@@ -41,12 +45,12 @@ def signup():
                        request.form['password']):
 			session['username']=request.form['username']
 			session['logged_in']=True
-			return render_template('cinema.html', error=error)
+			return render_template('cinema.html', error=error, myUserName=session['username'])
         else:
             error = 'Invalid username/password'
     # the code below is executed if the request method
     # was GET or the credentials were invalid
-    return render_template('cinema.html', error=error)
+    return render_template('cinema.html', error=error, myUserName=session['username'])
 
 
 @app.route('/logout',  methods=['POST', 'GET'])
@@ -140,7 +144,7 @@ def on_leave(data):
     send(username + ' has left the room.', room=room)       
     print('leave')
 if __name__=="__main__":
-	socketio.run(app,'0.0.0.0',5000)
+	socketio.run(app,'0.0.0.0',8080)
 
-#    app.run(host="0.0.0.0")
+    #app.run(host="0.0.0.0",port=8080)
 
