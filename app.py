@@ -1,8 +1,9 @@
-from flask import Flask, jsonify,render_template,request
+from flask import Flask, jsonify,render_template,request,session
 import requests
 import sys
 from flask.ext.socketio import join_room, leave_room
 from flask.ext.socketio import SocketIO, emit,send
+import db
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
@@ -11,14 +12,47 @@ socketio = SocketIO(app)
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404
 
-@app.route("/cinema")
+@app.route("/")
 def hello():
 	return render_template("cinema.html")
 
-@app.route("/profile")
-def profile():
-    return render_template("usr.html")
-	
+@app.route('/login',  methods=['POST', 'GET'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if db.check_user_password_right(request.form['username'],
+                       request.form['password']):
+			session['username']=request.form['username']
+			session['logged_in']=True
+			return render_template('cinema.html', error=error)
+        else:
+            error = 'Invalid username/password'
+    # the code below is executed if the request method
+    # was GET or the credentials were invalid
+    return render_template('cinema.html', error=error)
+
+@app.route('/signup',  methods=['POST', 'GET'])
+def signup():
+    error = None
+    if request.method == 'POST':
+        if db.add_user(request.form['username'],
+                       request.form['password']):
+			session['username']=request.form['username']
+			session['logged_in']=True
+			return render_template('cinema.html', error=error)
+        else:
+            error = 'Invalid username/password'
+    # the code below is executed if the request method
+    # was GET or the credentials were invalid
+    return render_template('cinema.html', error=error)
+
+
+@app.route('/logout',  methods=['POST', 'GET'])
+def logout():
+	error = None
+	session.clear()
+	return render_template('cinema.html', error=error)
+
 @app.route("/search",methods=["GET","POST"])
 def search():
 	if request.method == "POST":
@@ -31,14 +65,6 @@ def search():
 @socketio.on('my event', namespace='/test')
 def test_message(message):
     emit('rome', {'data': 'romeeeee'},broadcast=True)
-
-@socketio.on('request host', namespace='/test')
-def test_message(message):
-    emit('client response', {'data': 111 })
-    room=111
-    join_room(room)
-    random.getStatus()
-    print('request host');
 
 @socketio.on('my broadcast event', namespace='/test')
 def test_message(message):
@@ -74,5 +100,7 @@ def on_leave(data):
     send(username + ' has left the room.', room=room)       
     print('leave')
 if __name__=="__main__":
-	socketio.run(app,'0.0.0.0',8080)
+	socketio.run(app,'0.0.0.0',5000)
+
+#    app.run(host="0.0.0.0")
 
