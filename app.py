@@ -16,11 +16,7 @@ def page_not_found(error):
 
 @app.route("/")
 def hello():
-    return render_template("cinema.html",myUserName='rome')
-    #else:
-      #  print("what the fuck")
-       # return render_template("index.html")
-
+    return render_template("cinema.html")
 
 @app.route('/login',  methods=['POST', 'GET'])
 def login():
@@ -146,5 +142,5 @@ def on_leave(data):
 if __name__=="__main__":
 	socketio.run(app,'0.0.0.0',8080)
 
-    #app.run(host="0.0.0.0",port=8080)
+#    app.run(host="0.0.0.0")
 

@@ -42,7 +42,6 @@
 						onclick="setMessage()" style="display: none">Messages</a></li>
 				</ul>
 			</div>
-
 			<div class="navbar-form navbar-right">
 				{% if not session.logged_in %}
 				<form name="MyForm" method=post>
@@ -69,6 +68,5 @@
 	</div>
 	<!-- /.container-fluid --> </nav>
 	{% block cinema %}{% endblock %}
-	{% block user %}{% endblock %}
 </body>
 </html>

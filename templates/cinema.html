@@ -10,8 +10,6 @@
 	  	var identifier = Math.random();
 	  	var host = false;
 	  	socket.on('connect', function() {
-	        var status = document.getElementById("status");
-	    	status.value='connected!';
 	        //socket.emit('my event', {data: 'I\'m connected!'});
 	    });
 	    socket.on('host confirm', function(msg){
@@ -141,32 +139,28 @@
 		</div>
 		<div id="event-table" class="panel-body">
 			<div class="row" id="event-table-detail">
-				<div class=" col-sm-12 col-md-12 ">
-					<input type="text" class="form-control" id="status" readonly>
-				</div>
 				<div class= "col-sm-1 col-md-1" >
 					#
 				</div>
 				<div class=" col-sm-10 col-md-10 ">
 					<input type="text" class="form-control" id="room_number">
 				</div>
-				<div class=" col-sm-12 col-md-12 ">
-					<button class="btn btn-primary" onclick="requestHost()">Host</button>
+				<div class=" col-sm-12 col-md-12">
+				<div class=" col-sm-6 col-md-6">
+					<button class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
 				</div>
-				<div class=" col-sm-12 col-md-12 ">
-					<button class="btn btn-primary" onclick="requestJoin()">Join</button>
+				<div class=" col-sm-6 col-md-6">
+					<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">Join</button>
 				</div>
-				<div class=" col-sm-12 col-md-12 ">
-					<button class="btn btn-primary" onclick="requestInvite()">Invite</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="panel panel-default">
-		<div class="panel-heading">
+		<div class="panel-heading" style="background: url({{url_for('static', filename='background/bar.jpeg')}}) no-repeat; background-size: 100% 100%">
 			<a href="#" onclick="toggleEvent()">Chat room</a>
 		</div>
-		<div id="event-table" class="panel-body">
+		<div id="event-table" class="panel-body" style="background: url({{url_for('static', filename='background/back4.jpeg')}}) no-repeat; background-size: 100% 100%">
 			<div id="scrollable" style="overflow: scroll;height: 195px; margin: 0px 0px 10px 5px">
 			</div>
 			<div class=" col-sm-10 col-md-10 " style="padding:0px 0px">
@@ -199,13 +193,13 @@
 		a.scrollTop=a.scrollHeight;
 	}
 	function sendMessage(){
-		text = document.getElementById('chat_message').value;
+		text = '{{myUserName}}'+': '+document.getElementById('chat_message').value;
 		room_number = document.getElementById("room_number").value;
 		socket.emit('chat broadcast',{data: text,room: room_number});
 	}
 	function appendChat(msg){
 		d = document.getElementById('scrollable');
-		d.innerHTML = d.innerHTML+'{{myUserName}}'+': '+msg+"<br>";
+		d.innerHTML = d.innerHTML+"<h>"+msg+"</h><br>";
 		d.scrollTop=d.scrollHeight;
 	}
 </script>
