@@ -7,7 +7,7 @@ from flask.ext.socketio import SocketIO, emit,send
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
-
+roomCurrTime={}
 @app.errorhandler(404)
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404
@@ -45,12 +45,14 @@ def test_message(message):
     room = message['data']
     join_room(room)
     emit('join confirm', {'data': 'success'})
+    emit('pause for new',{'data': 'pause'},room=room)
     print('request join')
 
 @socketio.on('video status change', namespace='/test')
 def video_change(message):
     currTime = message['currTime']
     room = message['room']
+    roomCurrTime[room]=currTime
     stop = message['stop']
     currTime = message['currTime']
     print(message['identifier']);
@@ -62,6 +64,12 @@ def room_chat(message):
     data = message['data']
     print(room)
     emit('test Only', {'data': 'sds'}, room=room)
+
+@socketio.on('chat broadcast', namespace='/test')
+def room_chat(message):
+    room = message['room']
+    data = message['data']
+    emit('chat message receive', {'data': data}, room=room)
 
 @socketio.on('my broadcast event', namespace='/test')
 def test_message(message):
