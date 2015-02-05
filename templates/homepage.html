@@ -6894,7 +6894,7 @@ table {
 <div class="backgrounds hidden-tablet">
     <div class="background"
          data-page="1"
-         style="background-image:url(cover.jpg)">
+         style="background-image:url(/static/background/comeon.gif);background-size:100% 110%">
     </div>
     <div class="background with-nav hidden"
          data-page="10"
@@ -6916,19 +6916,23 @@ table {
         <div class="inner"><div class="header white no-spacer fixed" id="">
     <h1 class="title">
         <a href="/">
-            <span class="bold">FanSee</span>2015
+            <span class="bold">FanSee</span><font size="8">Cinema </font> 
         </a>
-    </h1><h2 class="subtitle">Watch A Viedo<ul class="adjectives">
-                    <li class="adjective active" data-no="1">interatively</li>
-                    <li class="adjective" data-no="2">unprecedentedly</li>
+    </h1>
+
+        <h2 class="subtitle"> <p><font size="7">Enjoy A Viedo With Friedns</font></p>
+                    <ul class="adjectives">
+                    <li class="adjective active" data-no="1">remotely</li>
+                    <li class="adjective" data-no="2">interatively</li>
                     <li class="adjective" data-no="3">closely</li>
-                    <li class="adjective" data-no="4"></li>
-                    <li class="adjective" data-no="5">with family</li>
-                    <li class="adjective" data-no="6">with friends</li>
-                </u></h2>
-    <h4 class="date hidden-phone">January 31st - February 7th&nbsp;&nbsp;|&nbsp;&nbsp;Columbia University&nbsp;&nbsp;|&nbsp;&nbsp;NYC</h4>
-    <h4 class="date phone-only">January 31st - February 7th</h4>
-    <h4 class="date phone-only">Columbia University&nbsp;&nbsp;|&nbsp;&nbsp;NYC</h4></div>
+                    <li class="adjective" data-no="4">unprecedentedly</li>
+                    <li class="adjective" data-no="5">fancifully</li>
+                    <li class="adjective" data-no="6">use FanSee</li>
+                    </u>
+        </h2>
+    <h4 class="date hidden-phone">A new way of sharing videos among friends&nbsp;&nbsp;|&nbsp;&nbsp;SEAS&nbsp;&nbsp;|&nbsp;&nbsp;COLUMBIA UNIVERSITY</h4>
+    <h4 class="date phone-only">DevFest  HackaThon  Project</h4>
+    <h4 class="date phone-only">SEAS&nbsp;&nbsp;|&nbsp;&nbsp;NYC</h4></div>
 <div class="header-spacer ">
 </div><div class="sub-page">
                 <div class="registration fade-out animated">
@@ -6966,9 +6970,12 @@ table {
             <div class="header white" id="">
     <h1 class="title">
         <a >
-            <span class="bold">What's More</span>&hellip;
+           <span class="bold">Contact Us</span>  <img src="/static/background/chronosour.gif">   
         </a>
-    </h1></div>
+    </h1>
+    <p><font size="5">For further information about how FanSee could be expanded and commercialized </font></p>
+    <p><font size="4">Or hopefully any hiring opportunities ^.^</font></p>
+    </div>
 <div class="header-spacer ">
 </div>
         </div>
@@ -6981,13 +6988,12 @@ table {
             <div class="header blue" id="">
     <h1 class="title">
         <a >
-            <span class="bold">Contact</span>Us
+            <h5>....</h5>
+            <h5>....</h5>
         </a>
     </h1></div>
 <div class="header-spacer ">
 </div>
-            <h5>....</h5>
-            <h5>....</h5>
         </div>
     </div>
 </div>
@@ -7063,7 +7069,7 @@ table {
         $('.scroll-down').addClass('fade-in-up');
     }, 1000);
 
-    setTimeout(setKey, 3000);
+    setTimeout(setKey, 2000);
     function setKey() {
         var $oldWord = $('.adjective.active'),
             $newWord = $('.adjective[data-no="' + ($oldWord.data('no') + 1) + '"]');
@@ -7077,7 +7083,7 @@ table {
             $newWord.addClass('active');
             $newWord.stop().animate({"opacity": 1}, 200)
             .promise().done(function() {
-                setTimeout(setKey, 3000);
+                setTimeout(setKey, 2000);
             });
         });
     }
