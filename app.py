@@ -90,7 +90,7 @@ def test_message(message):
 def test_message(message):
     room = message['data']
     join_room(room)
-    emit('join confirm', {'data': 'success'})
+    emit('join confirm', {'data': room})
     emit('pause for new',{'data': 'pause'},room=room)
     print('request join')
 
