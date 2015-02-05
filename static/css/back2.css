@@ -7,7 +7,12 @@ body {
   padding: 0;
   overflow-x: hidden;
 }
-
+.transparent{
+  background-color: rgba(255,0,0,0.1)
+}
+.allTransparent{
+  background-color: rgba(0,0,0,0.1);
+}
 #background-wrap {
     bottom: 0;
   left: 0;

@@ -146,7 +146,7 @@
 		$('#roomInfo').show();
 	}
 	function pressToSend(event){
-		if(event.keyCode==13&&document.getElementById('chat_message').value!=""){
+		if(event.keyCode==13){
 			sendMessage();
 		}
 	}
@@ -181,7 +181,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="joinModalLabel" style="text-align:center">What My Friend's Room Number?</h4>
+        <h4 class="modal-title" id="joinModalLabel" style="text-align:center">What's My Friend's Room Number?</h4>
       </div>
       <div class="modal-body">
       		<div style="text-align: center;padding: 0px 0px 10px 0px">
@@ -193,9 +193,8 @@
     </div>
   </div>
 </div>
-<div class="col-sm-12 col-md-12"> 
 	<div id="room-info-window" class="col-sm-3 col-md-3" style="padding:5px">
-		<div id="RoomInformation" class="panel panel-default">
+		<div id="RoomInformation" class="panel panel-default allTransparent">
 			<div class="panel-heading">
 				<a href="#" onclick="toggleRoomInformation()">Room Info</a>
 			</div>
@@ -220,12 +219,12 @@
 				</div>
 			</div>
 		</div>
-		<div id="ChatRoom" class="panel panel-default">
+		<div id="ChatRoom" class="panel panel-default allTransparent">
 			<div class="panel-heading">
-				<a href="#" onclick="toggleChatRoom()">Chat room</a>
+				<a href="#" onclick="toggleChatRoom()">Chat Room</a>
 			</div>
 			<div id="event-table" class="panel-body">
-				<div id="scrollable" style="overflow: scroll;height: 300px; margin: 0px 0px 10px 5px">
+				<div id="scrollable" style="overflow: scroll;max-height: 300px; margin: 0px 0px 10px 5px">
 					<div id="chat-wrapper" class="col-sm-12 col-md-12 col-lg-12">
 						<div id="chatresponse" class="ui comments"></div>
 					</div>
@@ -239,21 +238,16 @@
 			</div>
 		</div>
 	</div>
-	<div id="video-window" class="col-sm-9 col-md-9" style="padding:5px">
+	<div id="video-window" class="col-sm-9 col-md-9" style="padding:5px;height:100%">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<a href="#" onclick="toggleVideo()">Movie</a>
 			</div>
 			<div id="event-table" class="panel-body" style="padding:0px">
-				<div class="row" id="event-table-detail">
-					<div class="col-sm-12 col-md-12" style="height:509px">
-						<div id="player"></div>
-					</div>
-				</div>
+				<div id="player"></div>
 			</div>
 		</div>
 	</div>
-</div>
 <script>
 	//roll scroll bar
 	function scrollDown(divId){
@@ -261,6 +255,9 @@
 		a.scrollTop=a.scrollHeight;
 	}
 	function sendMessage(){
+		if(document.getElementById('chat_message').value==""){
+			return;
+		}
 		text = '{{myUserName}}'+': '+document.getElementById('chat_message').value;
 		room_number = document.getElementById("room_number").value;
 		socket.emit('chat broadcast',{data: text,room: room_number});
@@ -304,36 +301,24 @@
 	    opacity: 1,
 	  	}, 1000 );
 	}
-	function hideMovie(){
-		$("#video-window").animate({
-	    width: "0%",
-	    opacity: 0,
-	  	}, 0 );
-	}
-	function showChatRoom(){
-		$("#ChatRoom").animate({
-	    width: "25%",
-	    opacity: 1,
-	  	}, 1000 );
-	}
-	function hideChatRoom(){
-		$("#ChatRoom").animate({
-	    width: "0%",
-	    opacity: 0,
-	  	}, 0 );
-	}
-	function showRoomInformation(){
-		$("#RoomInformation").animate({
-	    width: "25%",
-	    opacity: 1,
-	  	}, 1000 );
-	}
-	function hideRoomInformation(){
-		$("#RoomInformation").animate({
-	    width: "0%",
-	    opacity: 0,
-	  	}, 0 );
-	}
+	//setInterval(function(){ alert("Hello"); }, 3000);/
+	var transp = 0;
+	var flag=true;
+	setInterval(function(){
+		var color = 'rgba(0, 0, 0,'
+		if(transp>0.5){flag=false;}
+		if(transp<0.2){flag=true;}
+		if(flag){
+			transp=transp+0.01*Math.random();
+		}else{
+			transp=transp-0.01*Math.random();
+		}
+		color= color+transp+')';
+		document.getElementById("RoomInformation").style.backgroundColor=color;
+		document.getElementById("ChatRoom").style.backgroundColor=color;
+	},100);
+	var width = document.getElementById("player").offsetWidth;
+	document.getElementById("player").style.height=width*0.6+"px";
 	hideAll();
 	showAll();
 </script>
