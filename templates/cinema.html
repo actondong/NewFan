@@ -25,6 +25,8 @@
 	    socket.on('join confirm', function(msg){
 	    	roomNumber = document.getElementById("room_number");
 	    	roomNumber.readOnly=true;
+	    	document.getElementById("roomNumberLabel").innerHTML="Room Number: "+msg.data;
+	    	hideActionButton();
 	    });
 	    socket.on('pause for new', function(){
 	    	if(host){
@@ -144,9 +146,12 @@
 		$('#roomInfo').show();
 	}
 	function pressToSend(event){
-		if(event.keyCode==13&&document.getElementById('chat_message').value!=""){
+		if(event.keyCode==13){
 			sendMessage();
 		}
+	}
+	function test(event){
+		alert("!");
 	}
 </script>
 
@@ -164,7 +169,7 @@
       		</div>
       		<button id="hostButton" class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
       		<div hidden id="hostConfirm">
-      			<h4 id="newGeneratedNumber" style="text-align: center">Your Room Number: </h4>
+      			<h4 id="newGeneratedNumber" style="text-align: center">My Room Number: </h4>
       		</div>
       </div>
     </div>
@@ -172,84 +177,77 @@
 </div>
 <!-- ask for join -->
 <div class="modal fade" id="joinModal" tabindex="-1" role="dialog" aria-labelledby="joinModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="joinModalLabel">Modal title</h4>
+        <h4 class="modal-title" id="joinModalLabel" style="text-align:center">What's My Friend's Room Number?</h4>
       </div>
       <div class="modal-body">
-        	<div class=" col-sm-12 col-md-12 " >
-				<input type="text" class="form-control" id="room_number">
-			</div>
+      		<div style="text-align: center;padding: 0px 0px 10px 0px">
+      			<img src="{{url_for('static', filename='background/join.jpeg')}}"/>
+      		</div>
+			<input type="text" class="form-control" id="room_number">
 			<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">confirm</button>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
 </div>
-<div class="col-sm-3 col-md-3" style="padding:5px">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<a href="#" onclick="toggleEvent()">Room Info</a>
-		</div>
-		<div id="event-table" class="panel-body">
-			<div class="row" id="event-table-detail">
-				<div class=" col-sm-12 col-md-12">
-					<div class=" col-sm-6 col-md-6">
-						<!-- join button -->
-						<button id="outsideHostButton" type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#hostModal" style="width:100%">
-						  Host
-						</button>
-					</div>
-					<div class=" col-sm-6 col-md-6">
-						<button id="outsideJoinButton" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinModal" style="width:100%">
-						  Join
-						</button>
-					</div>
-					<div hidden id="roomInfo" class="col-sm-12 col-md-12">
-						<h3 style="margin: 0"><span id="roomNumberLabel" class="label label-info"></span></h3>
+	<div id="room-info-window" class="col-sm-3 col-md-3" style="padding:5px">
+		<div id="RoomInformation" class="panel panel-default allTransparent">
+			<div class="panel-heading">
+				<a href="#" onclick="toggleRoomInformation()">Room Info</a>
+			</div>
+			<div id="event-table" class="panel-body">
+				<div class="row" id="event-table-detail">
+					<div class=" col-sm-12 col-md-12">
+						<div class=" col-sm-6 col-md-6">
+							<!-- join button -->
+							<button id="outsideHostButton" type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#hostModal" style="width:100%">
+							  Host
+							</button>
+						</div>
+						<div class=" col-sm-6 col-md-6">
+							<button id="outsideJoinButton" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinModal" style="width:100%">
+							  Join
+							</button>
+						</div>
+						<div hidden id="roomInfo" class="col-sm-12 col-md-12">
+							<h1 style="margin:0;text-align: center"><span id="roomNumberLabel" class="label label-info"></span></h1>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading" style="background: url({{url_for('static', filename='background/bar.jpeg')}}) no-repeat; background-size: 100% 100%">
-			<a href="#" onclick="toggleEvent()">Chat room</a>
-		</div>
-		<div id="event-table" class="panel-body" style="background: url({{url_for('static', filename='background/back4.jpeg')}}) no-repeat; background-size: 100% 100%">
-			<div id="scrollable" style="overflow: scroll;height: 300px; margin: 0px 0px 10px 5px">
-				<div id="chat-wrapper" class="col-sm-12 col-md-12 col-lg-12">
-					<div id="chatresponse" class="ui comments"></div>
+		<div id="ChatRoom" class="panel panel-default allTransparent">
+			<div class="panel-heading">
+				<a href="#" onclick="toggleChatRoom()">Chat Room</a>
+			</div>
+			<div id="event-table" class="panel-body">
+				<div id="scrollable" style="overflow: scroll;max-height: 300px; margin: 0px 0px 10px 5px">
+					<div id="chat-wrapper" class="col-sm-12 col-md-12 col-lg-12">
+						<div id="chatresponse" class="ui comments"></div>
+					</div>
 				</div>
-			</div>
-			<div class=" col-sm-9 col-md-9 " style="padding:0px 0px">
-				<input type="text" class="form-control" id="chat_message" onkeydown="pressToSend(event)">
-			</div>
-			<div class=" col-sm-2 col-md-2 " style="padding:0 0 0 5%">
-				<button class="btn btn-primary" onclick="sendMessage()">Send</button>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="col-sm-9 col-md-9" style="padding:5px">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<a href="#" onclick="toggleEvent()">Movie</a>
-		</div>
-		<div id="event-table" class="panel-body" style="padding:0px">
-			<div class="row" id="event-table-detail">
-				<div class="col-sm-12 col-md-12" style="height:509px">
-					<div id="player"></div>
+				<div class=" col-sm-9 col-md-9 " style="padding:0px 0px">
+					<input type="text" class="form-control" id="chat_message" onkeydown="pressToSend(event)">
+				</div>
+				<div class=" col-sm-2 col-md-2 " style="padding:0 0 0 5%">
+					<button class="btn btn-primary" onclick="sendMessage()">Send</button>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+	<div id="video-window" class="col-sm-9 col-md-9" style="padding:5px;height:100%">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a href="#" onclick="toggleVideo()">Movie</a>
+			</div>
+			<div id="event-table" class="panel-body" style="padding:0px">
+				<div id="player"></div>
+			</div>
+		</div>
+	</div>
 <script>
 	//roll scroll bar
 	function scrollDown(divId){
@@ -257,6 +255,9 @@
 		a.scrollTop=a.scrollHeight;
 	}
 	function sendMessage(){
+		if(document.getElementById('chat_message').value==""){
+			return;
+		}
 		text = '{{myUserName}}'+': '+document.getElementById('chat_message').value;
 		room_number = document.getElementById("room_number").value;
 		socket.emit('chat broadcast',{data: text,room: room_number});
@@ -274,5 +275,51 @@
 		$chatWindow.append($messageLine);
 		document.getElementById('scrollable').scrollTop=document.getElementById('scrollable').scrollHeight;
 	}
+	function hideAll(){
+		$("#room-info-window").animate({
+	    width: "0%",
+	    opacity: 0,
+	  	}, 0 );
+	  	$("#video-window").animate({
+	    width: "0%",
+	    opacity: 0,
+	  	}, 0 );
+	}
+	function showAll(){
+		$("#room-info-window").animate({
+	    width: "25%",
+	    opacity: 1,
+	  	}, 1000 );
+	  	$("#video-window").animate({
+	    width: "75%",
+	    opacity: 1,
+	  	}, 1000 );
+	}
+	function showMovie(){
+		$("#video-window").animate({
+	    width: "75%",
+	    opacity: 1,
+	  	}, 1000 );
+	}
+	//setInterval(function(){ alert("Hello"); }, 3000);/
+	var transp = 0;
+	var flag=true;
+	setInterval(function(){
+		var color = 'rgba(0, 0, 0,'
+		if(transp>0.5){flag=false;}
+		if(transp<0.2){flag=true;}
+		if(flag){
+			transp=transp+0.01*Math.random();
+		}else{
+			transp=transp-0.01*Math.random();
+		}
+		color= color+transp+')';
+		document.getElementById("RoomInformation").style.backgroundColor=color;
+		document.getElementById("ChatRoom").style.backgroundColor=color;
+	},100);
+	var width = document.getElementById("player").offsetWidth;
+	document.getElementById("player").style.height=width*0.6+"px";
+	hideAll();
+	showAll();
 </script>
 {% endblock %}

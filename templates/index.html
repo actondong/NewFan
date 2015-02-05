@@ -5,8 +5,10 @@
 <link rel="stylesheet" type="text/css" media="screen"
 	href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
 <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='css/cinema.css')}}" rel="stylesheet">
 <link href="{{url_for('static', filename='css/semantic.css')}}" rel="stylesheet">
 <link href="{{url_for('static', filename='css/background.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='css/back2.css')}}" rel="stylesheet">
 <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='js/moment.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='js/semantic.js')}}"></script>
@@ -15,7 +17,28 @@
 <title>Hello from Flask</title>
 </head>
 <body>
-<nav class="navbar navbar-inverse" role="navigation">
+<div id="background-wrap" style="height:100%">
+    	<div class="x1">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x2">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x3">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x4">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x5">
+        <div class="cloud"></div>
+    </div>
+</div>
+<nav class="navbar navbar-inverse" role="navigation" style="margin:0;background-color: rgba(0,0,0,0.7)">
 	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
@@ -25,7 +48,7 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">Group Up</a>
+			<a class="navbar-brand" href="#">FunSee</a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -34,13 +57,7 @@
 			<div class="navbar-form navbar-left">
 				<ul id="nav" class="nav nav-tabs">
 					<li id="homePage" role="presentation" class="active"><a
-						href="#" onclick="setHomePage()">Home</a></li>
-					<li id="profile" role="presentation"><a href="#"
-						onclick="setProfile()">Profile</a></li>
-					<li id="events" role="presentation"><a href="#"
-						onclick="setEvents()">Events</a></li>
-					<li id="message" role="presentation"><a href="#"
-						onclick="setMessage()" style="display: none">Messages</a></li>
+						href="#" onclick="setHomePage()">Cinema</a></li>
 				</ul>
 			</div>
 			<div class="navbar-form navbar-right">
@@ -52,7 +69,7 @@
 				      <input type="password" class="form-control"
 						placeholder="Password" name=password>
 			<input type=submit value=Login class="btn btn-primary" OnClick="document.forms['MyForm'].action = '/login'" >
-			<input type=submit value=Signup class="btn btn-success" OnClick="document.forms['MyForm'].action = '/signup'" >
+			<input type=submit value=Signup class="btn btn-primary" OnClick="document.forms['MyForm'].action = '/signup'" >
 				  </form>
 
 
@@ -68,6 +85,9 @@
 		<!-- /.navbar-collapse -->
 	</div>
 	<!-- /.container-fluid --> </nav>
+	<div>
 	{% block cinema %}{% endblock %}
+	</div>
+</div>
 </body>
 </html>
