@@ -17,10 +17,6 @@
 	    	host=true;
 	    	roomNumber.value=msg.data;
 	    	roomNumber.readOnly=true;
-	    	var roomNumberText = document.getElementById("newGeneratedNumber");
-	    	roomNumberText.innerHTML=roomNumberText.innerHTML+msg.data;
-	    	document.getElementById("roomNumberLabel").innerHTML="Room Number: "+msg.data;
-	    	hideActionButton();
 	    });
 	    socket.on('join confirm', function(msg){
 	    	roomNumber = document.getElementById("room_number");
@@ -122,9 +118,6 @@
 <script>
 	function requestHost(){
 		socket.emit('request host',{data: 'whatever'});
-		$('#hostConfirm').show(600);
-		$('#hostButton').hide();
-		//hostConfirm
 	}
 	function requestJoin(){
 		number = document.getElementById("room_number").value;
@@ -138,51 +131,22 @@
 		room_number = document.getElementById("room_number").value;
 		socket.emit('video status change',{currTime: currTime, stop: stop, room: room_number, identifier: identifier});
 	}
-	function hideActionButton(){
-		$('#outsideHostButton').hide();
-		$('#outsideJoinButton').hide();
-		$('#roomInfo').show();
-	}
-	function pressToSend(event){
-		if(event.keyCode==13&&document.getElementById('chat_message').value!=""){
-			sendMessage();
-		}
-	}
 </script>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Launch demo modal
+</button>
 
-<!-- ask for host -->
-<div class="modal fade" id="hostModal" tabindex="-1" role="dialog" aria-labelledby="hostModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="hostModalLabel" style="text-align: center">I'm The Host!</h4>
-      </div>
-      <div class="modal-body">
-      		<div style="text-align: center;padding: 0px 0px 10px 0px">
-      			<img src="{{url_for('static', filename='background/host.jpeg')}}"/>
-      		</div>
-      		<button id="hostButton" class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
-      		<div hidden id="hostConfirm">
-      			<h4 id="newGeneratedNumber" style="text-align: center">Your Room Number: </h4>
-      		</div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- ask for join -->
-<div class="modal fade" id="joinModal" tabindex="-1" role="dialog" aria-labelledby="joinModalLabel" aria-hidden="true">
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="joinModalLabel">Modal title</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="show()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
       </div>
       <div class="modal-body">
-        	<div class=" col-sm-12 col-md-12 " >
-				<input type="text" class="form-control" id="room_number">
-			</div>
-			<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">confirm</button>
+        ...
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -191,59 +155,55 @@
     </div>
   </div>
 </div>
-<div class="col-sm-3 col-md-3" style="padding:5px">
+<div class="col-sm-4 col-md-4">
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<a href="#" onclick="toggleEvent()">Room Info</a>
 		</div>
 		<div id="event-table" class="panel-body">
 			<div class="row" id="event-table-detail">
+				<div class=" col-sm-12 col-md-12 " >
+					<input type="text" class="form-control" id="room_number">
+				</div>
 				<div class=" col-sm-12 col-md-12">
 					<div class=" col-sm-6 col-md-6">
-						<!-- join button -->
-						<button id="outsideHostButton" type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#hostModal" style="width:100%">
-						  Host
-						</button>
+						<button class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
 					</div>
 					<div class=" col-sm-6 col-md-6">
-						<button id="outsideJoinButton" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinModal" style="width:100%">
-						  Join
-						</button>
-					</div>
-					<div hidden id="roomInfo" class="col-sm-12 col-md-12">
-						<h3 style="margin: 0"><span id="roomNumberLabel" class="label label-info"></span></h3>
+						<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">Join</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	<div class="panel panel-default">
 		<div class="panel-heading" style="background: url({{url_for('static', filename='background/bar.jpeg')}}) no-repeat; background-size: 100% 100%">
 			<a href="#" onclick="toggleEvent()">Chat room</a>
 		</div>
 		<div id="event-table" class="panel-body" style="background: url({{url_for('static', filename='background/back4.jpeg')}}) no-repeat; background-size: 100% 100%">
-			<div id="scrollable" style="overflow: scroll;height: 300px; margin: 0px 0px 10px 5px">
+			<div id="scrollable" style="overflow: scroll;height: 195px; margin: 0px 0px 10px 5px">
 				<div id="chat-wrapper" class="col-sm-12 col-md-12 col-lg-12">
 					<div id="chatresponse" class="ui comments"></div>
 				</div>
 			</div>
-			<div class=" col-sm-9 col-md-9 " style="padding:0px 0px">
-				<input type="text" class="form-control" id="chat_message" onkeydown="pressToSend(event)">
+			<div class=" col-sm-10 col-md-10 " style="padding:0px 0px">
+				<input type="text" class="form-control" id="chat_message">
 			</div>
-			<div class=" col-sm-2 col-md-2 " style="padding:0 0 0 5%">
+			<div class=" col-sm-2 col-md-2 " style="padding:0px 10px">
 				<button class="btn btn-primary" onclick="sendMessage()">Send</button>
 			</div>
 		</div>
 	</div>
 </div>
-<div class="col-sm-9 col-md-9" style="padding:5px">
+<div class="col-sm-8 col-md-8">
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<a href="#" onclick="toggleEvent()">Movie</a>
 		</div>
-		<div id="event-table" class="panel-body" style="padding:0px">
+		<div id="event-table" class="panel-body">
 			<div class="row" id="event-table-detail">
-				<div class="col-sm-12 col-md-12" style="height:509px">
+				<div class="col-sm-12 col-md-12" style="height:500px">
 					<div id="player"></div>
 				</div>
 			</div>
@@ -260,7 +220,6 @@
 		text = '{{myUserName}}'+': '+document.getElementById('chat_message').value;
 		room_number = document.getElementById("room_number").value;
 		socket.emit('chat broadcast',{data: text,room: room_number});
-		document.getElementById('chat_message').value="";
 	}
 	function appendChat(msg){
 		$chatWindow = $('#chatresponse');

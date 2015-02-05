@@ -1,0 +1,7247 @@
+<html>
+<head>
+
+<!--website.other.js   -->
+<script type="text/javascript">
+// funnyordie.com
+    var WSExtract = {};
+    (function() {
+    var videoURL;
+    var downloadBtnDiv;
+
+    function htmlFive(element) {
+        var videoURL = document.location.href;
+        var url = videoURL;
+        if(url.indexOf("vimeo.com") != -1 && isHTML5 == true)
+        {
+            vplayerDiv = element.parentNode.parentNode.parentNode;
+            vbtnDownload = VCUCore.attachButtonDiv(vplayerDiv, vcuExtensionConfig.getDownloadButtonPosition(), "", vcuExtensionConfig.getInvokeProtocol() + VCUDealUrl.base64Encode("pageUrl=" + videoURL));
+            VCUCore.bind_mouseover(vplayerDiv, vbtnDownload);
+        }         
+    }
+
+    function handleMouseoverEvent(event) {
+        // 如 果 点 击 了 " 删 除”  直 接，return
+        if (ULTIMATESTATE == StateEnum.End) return;
+        
+        var validTarget = false ;
+        if (VCUCore.getBrowserIndent() != "firefox") {  //Chrome & Safari
+            validTarget = event.target instanceof HTMLEmbedElement || event.target instanceof HTMLObjectElement/* || event.target instanceof HTMLIFrameElement*/ || event.target instanceof HTMLVideoElement ;
+        }
+        else {
+            // try {
+            //  validTarget = event.originalTarget instanceof HTMLEmbedElement || event.originalTarget instanceof HTMLObjectElement/* || event.originalTarget instanceof HTMLIFrameElement*/ || event.originalTarget instanceof HTMLVideoElement ;
+            // }
+            // catch(ex) {
+                validTarget = (event.originalTarget.toString().indexOf("HTMLEmbedElement") != -1) || (event.originalTarget.toString().indexOf("HTMLObjectElement") != -1)/* || (event.originalTarget.toString().indexOf("HTMLIFrameElement") != -1) */ || (event.originalTarget.toString().indexOf("HTMLVideoElement") != -1) ;
+            //}
+        }
+            
+        if (validTarget) {
+            // 233/1397 的 比 例 是 为 了 过 滤 掉 veoh 网 站 的 一 个 高 宽 比 为233/1397 的 flash
+            var flash = VCUCore.targetObject(event);
+            if (flash.offsetHeight > 180 && flash.offsetWidth > 160 && (flash.offsetHeight / flash.offsetWidth > 255 / 960 && flash.offsetHeight / flash.offsetWidth < 1.2))  {
+                if (downloadBtnDiv) {
+                    VCUCore.unbind_mouseover(playerDiv111, downloadBtnDiv);
+                    VCUCore.deleteAttachedButton(downloadBtnDiv);
+                    playerDiv111 = null;
+                    downloadBtnDiv = null;
+                }
+                                    
+                videoURL = document.location.href;
+                
+                var invokeURL = "pageUrl=" + videoURL ;
+                //if(videoURL.indexOf("nicovideo.jp") != -1)
+                {
+                    invokeURL += "-WS-GUES-";
+                    invokeURL += "cookies=" + document.cookie ;
+                }
+                
+                downloadBtnDiv = VCUCore.attachButtonDiv(VCUCore.targetObject(event), vcuExtensionConfig.getDownloadButtonPosition(), "", vcuExtensionConfig.getInvokeProtocol() + VCUDealUrl.base64Encode(invokeURL));
+
+                playerDiv111 = VCUCore.targetObject(event).parentNode;
+                if (VCUCore.getBrowserIndent() != "firefox") {
+                    if (playerDiv111 instanceof HTMLObjectElement || playerDiv111 instanceof HTMLEmbedElement) {
+                        playerDiv111 = playerDiv111.parentNode;
+                    }
+                }else {
+                    if ((playerDiv111.toString().indexOf("HTMLEmbedElement") != -1) || (playerDiv111.toString().indexOf("HTMLObjectElement") != -1) ) {
+                        playerDiv111 = playerDiv111.parentNode;
+                    }
+                }
+                VCUCore.bind_mouseover(playerDiv111, downloadBtnDiv);
+                VCUCore.showElement(downloadBtnDiv);
+            }
+        }
+    }
+
+    function handleBeforeLoadEvent(event)
+    {
+        element = VCUCore.targetObject(event);
+        try {
+            isHTML5 = (element.toString().indexOf("HTMLVideoElement") != -1) ;
+        }
+        catch(ex) {
+        }
+        htmlFive(element);
+    }
+    
+    var url = document.location.href;
+    var isHTML5 = false;
+    
+    if(url.indexOf("vimeo.com") != -1)
+    {
+        document.addEventListener("beforeload", handleBeforeLoadEvent, true); 
+        document.addEventListener("mouseover", handleMouseoverEvent, false);
+    }
+    else
+    {
+        document.addEventListener("mouseover", handleMouseoverEvent, false);
+    }
+        })();
+</script>
+
+<!-- vcuDeal -->
+<script type="text/javascript">
+    var VCUDealUrl = {
+    // 生成WSYTD链接
+    generateWSYTDUrl: function(videoURL, videoPageURL, videoTitle) 
+    {
+        var separator = "-WS-GUES-";
+        var wsytdURL = "";
+        if (videoURL.length <= 0) {
+            // 动态分析只需要视频页面地址即可,直接返回
+            wsytdURL += this.base64Encode("pageUrl=" + videoPageURL);
+            if(videoPageURL.indexOf("nicovideo.jp") != -1)
+            {
+                wsytdURL += separator;
+                wsytdURL += "cookies=" + document.cookie ;
+            }
+               wsytdURL = vcuExtensionConfig.getInvokeProtocol() + wsytdURL;
+               return wsytdURL;
+        }
+        else {
+            // 静态分析需要视频真实下载地址、视频页面地址、视频名称
+            wsytdURL += "resolution=" + videoURL;
+            wsytdURL += separator;
+            wsytdURL += "pageUrl=" + videoPageURL;
+            wsytdURL += separator;
+            if (!videoTitle) {
+                wsytdURL += ' ';
+            }
+            else {
+                wsytdURL += "title=" + videoTitle;
+            }
+        }
+
+        // 将http://中的:替换为%3A以便支持主程序
+        var colonPos = wsytdURL.indexOf(':');
+        if (colonPos == -1) {
+            return null;
+        }
+//      wsytdURL = wsytdURL.substring(0, colonPos) + "%3A" + wsytdURL.substring(colonPos + 1, wsytdURL.length);
+        if(videoPageURL.indexOf("nicovideo.jp") != -1)
+        {
+            wsytdURL += separator;
+            wsytdURL += "cookies=" + document.cookie ;
+        }
+
+        wsytdURL = vcuExtensionConfig.getInvokeProtocol() + this.base64Encode(wsytdURL);
+
+
+        return wsytdURL;
+    },
+
+    // 生成WSYTD链接
+    getWSYTDUrl: function(videoURL) {
+        var videoPageURL = window.location.href;
+        var videoTitle = this.getWebTitle();
+
+        var wsytdURL;
+        if (typeof(videoURL) == "string") {
+            // 单个视频地址直接返回字符串
+            wsytdURL = this.generateWSYTDUrl(videoURL, videoPageURL, videoTitle);
+        }
+        else if (typeof(videoURL) == "object" && videoURL.length) {
+            // 多个视频地址返回字符串数组
+            if (videoURL.length > 1) {
+                wsytdURL = [];
+                for (var i = 0; i < videoURL.length; i++) {
+                    wsytdURL.push([videoURL[i][0], this.generateWSYTDUrl(videoURL[i][0], videoPageURL, videoTitle)]);
+                }
+            }
+            else
+            {
+                wsytdURL = this.generateWSYTDUrl(videoURL[0][0], videoPageURL, videoTitle);
+            }
+        }
+        else {
+            // 没有获取到视频地址则返回页面地址供主程序进行动态分析
+            wsytdURL = this.generateWSYTDUrl("", videoPageURL, "");
+        }
+
+        return wsytdURL;
+    },
+    
+    // 获 取 网 页 标 题
+    getWebTitle: function() {
+        kdocTitle = document.title; // 标 题
+        if (kdocTitle == null) {
+            var t_titles = document.getElementsByTagName("title");
+            if (t_titles && t_titles.length > 0)
+            {
+                kdocTitle = t_titles[0];
+            }else {
+                kdocTitle = "";
+            }
+        }
+        return kdocTitle;
+    },
+    
+    base64Encode: function(input) {
+        var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        var output = "";
+        var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+        var i = 0;
+        input = this._utf8_encode(input);
+        while (i < input.length) {
+            chr1 = input.charCodeAt(i++);
+            chr2 = input.charCodeAt(i++);
+            chr3 = input.charCodeAt(i++);
+            enc1 = chr1 >> 2;
+            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+            enc4 = chr3 & 63;
+            if (isNaN(chr2)) {
+                enc3 = enc4 = 64;
+            } else if (isNaN(chr3)) {
+                enc4 = 64;
+            }
+            output = output +
+            _keyStr.charAt(enc1) + _keyStr.charAt(enc2) +
+            _keyStr.charAt(enc3) + _keyStr.charAt(enc4);
+        }
+        return output;
+    },
+    
+    _utf8_encode: function(string) {
+        string = string.replace(/\r\n/g,"\n");
+        var utftext = "";
+        for (var n = 0; n < string.length; n++) {
+            var c = string.charCodeAt(n);
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            } else if((c > 127) && (c < 2048)) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            } else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+ 
+        }
+        return utftext;
+    }
+};
+</script>
+<!-- vcuCore-->
+<script type="text/javascript">
+   var AttachStyleEnum = {
+    AttachOuterTopLeft: 0, 
+    AttachOuterTopRight: 1, 
+    AttachOuterBottomLeft: 2, 
+    AttachOuterBottomRight: 3, 
+    AttachInnerTopLeft: 4, 
+    AttachInnerTopRight: 5, 
+    AttachInnerBottomLeft: 6, 
+    AttachInnerBottomRight: 7
+};
+
+// 定 义 一 个 枚 举 来 标 示 “x” 按 钮 状 态
+var StateEnum = {
+    Start: 0,  // “ 删 除” 按 钮 未 被 点 击, 初 始 状 态
+    End: 1    // “ 删 除” 按 钮 被 点 击 后 状 态
+};
+
+var ULTIMATESTATE = StateEnum.Start;
+
+
+// 这里加上了命名空间，回调函数中的变量直接使用VCUCore.这种方式来读取的，其余使用this.读取。
+var VCUCore = {
+    // variants
+    attachButtonList: [], 
+    isInitialAdjustPos: false, 
+    
+    timeout: 500, 
+    closetimer: 0, 
+    ddmenuitem: 0, 
+    
+    timeoutHandle: null, 
+    
+    onShowElement: null, 
+    onDelayHideElement: null, 
+    
+    // functions
+    newGuid: function() {
+        var guid = "";
+        for (var i = 1; i < 32; i++) {
+            var n = Math.floor(Math.random() * 16.0).toString(16);
+            guid += n;
+            if ((i == 8) || (i == 12) || (i == 16) || (i == 20)) guid += "-";
+        }
+        return guid;
+    }, 
+    
+    getPreviousSibling: function(n) {
+        var x = n.previousSibling;
+        while (x.nodeType != 1)
+        {
+            x = x.previousSibling;
+        }
+        return x;
+    }, 
+    
+    // 获取元素实际显示的位置
+    getElementPos: function(el) {
+        var ua = window.navigator.userAgent.toLowerCase();
+        var isOpera = (ua.indexOf('opera') != -1);
+        var isIE = (ua.indexOf('msie') != -1 && !isOpera); // not opera spoof
+        if (el.parentNode === null || (el.style != null && el.style.display == 'none')) {
+            return false;
+        }
+        var parent = null;
+        var pos = [];
+        var box;
+        if (el.getBoundingClientRect) // IE
+        {
+            box = el.getBoundingClientRect();
+            var scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop);
+            var scrollLeft = Math.max(document.documentElement.scrollLeft, document.body.scrollLeft);
+            return {
+                x: box.left + scrollLeft,
+                y: box.top + scrollTop
+            };
+        } else if (document.getBoxObjectFor) // gecko   
+        {
+            box = document.getBoxObjectFor(el);
+            var borderLeft = (el.style.borderLeftWidth) ? parseInt(el.style.borderLeftWidth) : 0;
+            var borderTop = (el.style.borderTopWidth) ? parseInt(el.style.borderTopWidth) : 0;
+            pos = [box.x - borderLeft, box.y - borderTop];
+        } else // safari & opera   
+        {
+            pos = [el.offsetLeft, el.offsetTop];
+            parent = el.offsetParent;
+            if (parent != el) {
+                while (parent) {
+                    //console.log(parent.class);
+                    pos[0] += parent.offsetLeft;
+                    pos[1] += parent.offsetTop;
+                    parent = parent.offsetParent;
+                }
+            }
+            if (ua.indexOf('opera') != -1 || (ua.indexOf('safari') != -1 && (el.style != null && el.style.position == 'absolute'))) {
+                pos[0] -= document.body.offsetLeft;
+                pos[1] -= document.body.offsetTop;
+            }
+        }
+        if (el.parentNode) {
+            parent = el.parentNode;
+        } else {
+            parent = null;
+        }
+        while (parent && parent.tagName != 'BODY' && parent.tagName != 'HTML') { // account for any scrolled ancestors
+            pos[0] -= parent.scrollLeft;
+            pos[1] -= parent.scrollTop;
+            if (parent.parentNode) {
+                parent = parent.parentNode;
+            } else {
+                parent = null;
+            }
+        }
+        return {
+            x: pos[0],
+            y: pos[1]
+        };
+    }, 
+    
+    // 判断元素是否显示(可能不能跨浏览器)
+    isVisible: function(element) {
+        return (element.clientHeight > 0 || element.clientWidth > 0);
+    }, 
+    
+    // 计算附加按钮的位置
+    calculateButtonPos: function(attachedElement, buttonDiv, attachStyle) {
+        // alter the button's position
+        var btnWidth = buttonDiv.offsetWidth;
+        var btnHeight = buttonDiv.offsetHeight;
+        var pos = this.getElementPos(attachedElement);
+        var beforeChildLeft = pos.x;
+        var beforeChildTop = pos.y;
+        var divLeft = 0;
+        var divTop = 0;
+        switch (attachStyle)
+        {
+            case AttachStyleEnum.AttachOuterTopLeft:
+            {
+                divLeft = beforeChildLeft;
+                divTop = beforeChildTop - btnHeight;
+                break;
+            }
+            case AttachStyleEnum.AttachOuterTopRight:
+            {
+                divLeft = beforeChildLeft + attachedElement.offsetWidth - btnWidth;
+                divTop = beforeChildTop - btnHeight;
+                break;
+            }
+            case AttachStyleEnum.AttachOuterBottomLeft:
+            {
+                divLeft = beforeChildLeft;
+                divTop = beforeChildTop + attachedElement.offsetHeight;
+                break;
+            }
+            case AttachStyleEnum.AttachOuterBottomRight:
+            {
+                divLeft = beforeChildLeft + attachedElement.offsetWidth - btnWidth;
+                divTop = beforeChildTop + attachedElement.offsetHeight;
+                break;
+            }
+            case AttachStyleEnum.AttachInnerTopLeft:
+            {
+                divLeft = beforeChildLeft;
+                divTop = beforeChildTop;
+                break;
+            }
+            case AttachStyleEnum.AttachInnerTopRight:
+            {
+                divLeft = beforeChildLeft + attachedElement.offsetWidth - btnWidth;
+                divTop = beforeChildTop;
+                break;
+            }
+            case AttachStyleEnum.AttachInnerBottomLeft:
+            {
+                divLeft = beforeChildLeft;
+                divTop = beforeChildTop + attachedElement.offsetHeight - btnHeight;
+                break;
+            }
+            case AttachStyleEnum.AttachInnerBottomRight:
+            {
+                divLeft = beforeChildLeft + attachedElement.offsetWidth - btnWidth;
+                divTop = beforeChildTop + attachedElement.offsetHeight - btnHeight;
+                break;
+            }
+        }
+        return {
+                    x: divLeft, 
+                    y: divTop
+                };
+    }, 
+    
+    // 获取附加按钮
+    getButtonElement: function(attachedElement) {
+        for (var i = 0; i < VCUCore.attachButtonList.length; i++) {
+            if (attachedElement == VCUCore.attachButtonList[i].attachedElement) return WSFuntion.attachButtonList[i].buttonDiv;
+        }
+    }, 
+    
+    // 调整按钮的位置
+    adjustAttachButtonPos: function() {
+        for (var i = 0; i < VCUCore.attachButtonList.length; i++) {
+            attachedElement = VCUCore.attachButtonList[i].attachedElement;
+            buttonDiv = VCUCore.attachButtonList[i].buttonDiv;
+            attachStyle = VCUCore.attachButtonList[i].attachStyle;
+
+            var divPos = VCUCore.calculateButtonPos(attachedElement, buttonDiv, attachStyle);
+            buttonDiv.style.left = divPos.x.toString() + 'px';
+            buttonDiv.style.top = divPos.y.toString() + 'px';
+        }
+    }, 
+    
+    // 删除附加的按钮
+    deleteAttachedButton: function(button) {
+        for (var i = 0; i < VCUCore.attachButtonList.length; i++) {
+            if (VCUCore.attachButtonList[i].buttonDiv === button) {
+                VCUCore.attachButtonList.splice(i, 1);
+                document.body.removeChild(button);
+                break;
+            }
+        }
+    }, 
+    
+    removeBtnElement: function(divId){
+        var parent = document.getElementById(divId);
+        var children = parent.childNodes;
+        for(i= 0; i < children.length; i++){
+            parent.removeChild(children[i]);
+        }
+       document.body.removeChild(parent);
+    },
+    
+    openExternalLink: function(url) {
+        var strScript = '<script>' + 'function closeMyWindow(){window.close()}location.href="'+url + '";window.setTimeout(closeMyWindow, 50);' + '\</script\>';
+        myWindow1 = window.open('', "_blank", '');
+        myWindow1.document.open('text/html', 'replace');
+        myWindow1.document.write(strScript);
+        myWindow1.document.close();
+        window.focus();
+    },
+    
+    test: function(url) {
+        VCUCore.openExternalLink(url); VCUCore.mclose(); 
+        //downloadDiv.style.visibility = 'hidden';
+    },
+    
+    // 附加按钮
+    attachButtonDiv: function(attachedElement, attachStyle, buttonCaption, buttonLink, divId, buttonId) {
+        // Create div element
+        if (!attachedElement) return;
+        var downloadDiv = document.createElement("div");
+        downloadDiv.setAttribute("style", "z-index: 2147483647; background: transparent; position: absolute;");
+        if (divId)  downloadDiv.setAttribute("id", divId);
+        downloadDiv.setAttribute("id", "ultimate");
+
+        downloadDiv.style.visibility = 'hidden';
+        //downloadDiv.style.visibility = 'visible';
+
+        // Create button element
+        var btnDownload = document.createElement("a");
+        btnDownload.setAttribute("class", "ultimatebutton");
+        //btnDownload.setAttribute("href", "javascript:void(0);");
+        //btnDownload.setAttribute("href", buttonLink);
+        if(this.getBrowserIndent() == "firefox")
+            btnDownload.setAttribute("href", buttonLink);
+        else if(this.getBrowserIndent() == "chrome")
+            btnDownload.setAttribute("onclick", 'VCUCore.test("' + buttonLink + '");');
+        else if(this.getBrowserIndent() == "safari") {
+            btnDownload.setAttribute("href", buttonLink);
+            btnDownload.addEventListener("click", function(){this.blur(); downloadDiv.style.visibility = 'hidden'; return false; });
+        }
+        btnDownload.style.cursor = "pointer";
+        var btnText = document.createElement("span");
+        if (buttonCaption) btnText.innerHTML = buttonCaption;
+        btnDownload.appendChild(btnText);
+        
+        var btnClose = document.createElement("a");
+        btnClose.setAttribute("class", "ultimateDeleteButton");
+        //btnDownload.setAttribute("href", buttonLink);
+        btnClose.addEventListener("click", function(){ var idStr = downloadDiv.getAttribute("id"); VCUCore.removeBtnElement(idStr); ULTIMATESTATE = StateEnum.End;}, false);
+        btnClose.style.cursor = "pointer";
+        
+        downloadDiv.appendChild(btnDownload);
+        downloadDiv.appendChild(btnClose);
+        var body = document.body;
+        body.insertBefore(downloadDiv, body.lastChild);
+
+        var divPos = this.calculateButtonPos(attachedElement, downloadDiv, attachStyle);
+        
+        downloadDiv.style.left = divPos.x.toString() + 'px';
+        downloadDiv.style.top = divPos.y.toString() + 'px';
+        downloadDiv.style.height = "29px";
+        downloadDiv.style.width = "124px";
+        
+        // initial onresize event
+        if (!this.isInitialAdjustPos) {
+            window.addEventListener("resize", VCUCore.adjustAttachButtonPos, false);
+            //window.addEventListener("DOMNodeInserted", VCUCore.adjustAttachButtonPos, false);
+            this.isInitialAdjustPos = true;
+        }
+
+        // push attachButtonInfo into attachButtonList
+        var attachButtonInfo = {attachedElement: attachedElement, buttonDiv: downloadDiv, attachStyle: attachStyle};
+        VCUCore.attachButtonList.push(attachButtonInfo);
+
+        return downloadDiv;
+    }, 
+    
+    // open hidden layer
+    mopen: function(id) {
+        // cancel close timer
+        VCUCore.mcancelclosetime();
+
+        // close old layer
+        if (VCUCore.ddmenuitem) VCUCore.ddmenuitem.style.visibility = 'hidden';
+
+        // get new layer and show it
+        VCUCore.ddmenuitem = document.getElementById(id);
+        if (VCUCore.ddmenuitem)
+        {
+            VCUCore.ddmenuitem.style.visibility = 'visible';
+        }
+    }, 
+    
+    // close showed layer
+    mclose: function() {
+        if (VCUCore.ddmenuitem) VCUCore.ddmenuitem.style.visibility = 'hidden';
+    }, 
+    
+    // go close timer
+    mclosetime: function() {
+        VCUCore.closetimer = window.setTimeout(VCUCore.mclose, VCUCore.timeout);
+    }, 
+    
+    // cancel close timer
+    mcancelclosetime: function() {
+        if (VCUCore.closetimer) {
+            window.clearTimeout(VCUCore.closetimer);
+            VCUCore.closetimer = null;
+        }
+    }, 
+    
+    // 附加下拉按钮菜单
+    attachDropdownMenu: function(attachedElement, attachStyle, buttonCaption, itemArray, divId, buttonId) {
+        // Create div element
+        if (!attachedElement || !itemArray) return;
+        var downloadDiv = document.createElement("div");
+        downloadDiv.setAttribute("style", "z-index: 2147483647; background: transparent; position: absolute;");
+        if (divId)  downloadDiv.setAttribute("id", "divId");
+        
+        downloadDiv.setAttribute("id", "ultimate");
+        downloadDiv.style.visibility = 'hidden';
+
+        // Create menu element
+        var ulElement = document.createElement("ul");
+        ulElement.setAttribute("id", "myultimatebem");
+        var liElement = document.createElement("li");
+        ulElement.appendChild(liElement);
+        var btnElement = document.createElement("a");
+        btnElement.setAttribute("href", "javascript:void(0);");
+        btnElement.setAttribute("class", "ultimatebutton");
+        if (buttonCaption) btnElement.innerHTML = buttonCaption;
+        // tag a addEventListener
+        var guid = this.newGuid();  //this.blur();
+        btnElement.addEventListener("click", function() {VCUCore.mopen(guid); return false; }, false);
+        btnElement.addEventListener("mouseover", function() { VCUCore.mcancelclosetime() }, false);
+        btnElement.addEventListener("mouseout", function() { VCUCore.mclosetime() }, false);
+        
+        var btnClose = document.createElement("a");
+        btnClose.setAttribute("class", "ultimateDeleteButton");
+        btnClose.addEventListener("click", function(){ var idStr = downloadDiv.getAttribute("id"); VCUCore.removeBtnElement(idStr); ULTIMATESTATE = StateEnum.End;}, false);
+        btnClose.style.cursor = "pointer";
+        
+        liElement.appendChild(btnElement);
+        liElement.appendChild(btnClose);
+
+        var divMenu = document.createElement("div");
+        divMenu.setAttribute("id", guid);
+        // tag div addEventListener
+        divMenu.addEventListener("mouseover", function() { VCUCore.mcancelclosetime() }, false);
+        divMenu.addEventListener("mouseout", function() { VCUCore.mclosetime() }, false);
+        
+        liElement.appendChild(divMenu); 
+        for (var i = 0; i < itemArray.length; i++) {
+            var url = itemArray[i][1] ? itemArray[i][1] : "#";
+            var aItem = document.createElement("a");
+            if(this.getBrowserIndent() == "chrome")
+                aItem.setAttribute("onclick", 'VCUCore.test("' + url + '");');
+            else {  //  Firefox & Safari
+                aItem.setAttribute("href", url);
+                aItem.addEventListener("click", function() { VCUCore.mclose(); downloadDiv.style.visibility = 'hidden'; }, false);
+            }
+            aItem.style.cursor = "pointer";
+            aItem.innerHTML = itemArray[i][0];
+            divMenu.appendChild(aItem);
+        }
+        
+        downloadDiv.appendChild(ulElement);
+        
+        var body = document.body;
+        body.insertBefore(downloadDiv, body.lastChild);
+
+        var divPos = this.calculateButtonPos(attachedElement, downloadDiv, attachStyle);
+
+        downloadDiv.style.left = divPos.x.toString() + 'px';
+        downloadDiv.style.top = divPos.y.toString() + 'px';
+
+        // initial onresize event
+        if (!this.isInitialAdjustPos) {
+            window.addEventListener("resize", VCUCore.adjustAttachButtonPos, false);
+            //window.addEventListener("DOMNodeInserted", VCUCore.adjustAttachButtonPos, false);
+            this.isInitialAdjustPos = true;
+        }
+
+        // push attachButtonInfo into attachButtonList
+        var attachButtonInfo = {attachedElement: attachedElement, buttonDiv: downloadDiv, attachStyle: attachStyle};
+        VCUCore.attachButtonList.push(attachButtonInfo);
+
+        return downloadDiv;
+    },
+    
+    showElement: function(tipElement) {
+        if (VCUCore.timeoutHandle) clearTimeout(this.timeoutHandle);
+        if (tipElement) {
+            tipElement.style.visibility = "visible";
+        }
+    }, 
+
+    hideElement: function(tipElement) {
+        if (VCUCore.timeoutHandle) clearTimeout(this.timeoutHandle);
+        if (tipElement) {
+            tipElement.style.visibility = "hidden";
+        }
+    }, 
+
+    delayHideElement: function(tipElement) {
+        VCUCore.timeoutHandle = setTimeout(function() { VCUCore.hideElement(tipElement) }, 500);
+    }, 
+
+    // 绑定鼠标经过事件
+    bind_mouseover: function(divElement, tipElement) {
+        if (typeof(divElement) == "string") {
+            divElement = document.getElementById(divElement);
+            tipElement = document.getElementById(tipElement);
+        }
+        if (divElement == null || tipElement == null)
+            return;
+
+        divElement.addEventListener("mouseover", this.onShowElement = function() { VCUCore.adjustAttachButtonPos(); VCUCore.showElement(tipElement); }, false);
+        divElement.addEventListener("mouseout", this.onDelayHideElement = function() { VCUCore.delayHideElement(tipElement); }, false);
+            
+        tipElement.addEventListener("mouseover", function() { VCUCore.showElement(tipElement); }, false);
+        tipElement.addEventListener("mouseout", function() { VCUCore.delayHideElement(tipElement); }, false);
+    }, 
+    
+    // 取消绑定鼠标经过事件
+    unbind_mouseover: function(divElement, tipElement) {
+        if (typeof(divElement) == "string") {
+            divElement = document.getElementById(divElement);
+            tipElement = document.getElementById(tipElement);
+        }
+
+        if (this.onShowElement && divElement) {
+            divElement.removeEventListener("mouseover", VCUCore.onShowElement, false);
+        }
+        if (this.onDelayHideElement && divElement) {
+            divElement.removeEventListener("mouseout", VCUCore.onDelayHideElement, false);
+        }
+
+        if (this.onShowElement && tipElement) {
+            tipElement.removeEventListener("mouseover", VCUCore.onShowElement, false);
+        }
+        if (this.onDelayHideElement && tipElement) {
+            tipElement.removeEventListener("mouseout", VCUCore.onDelayHideElement, false);
+        }
+    },
+    
+    getBrowserIndent: function()
+    {
+        var ua = window.navigator.userAgent.toLowerCase();
+
+        if(ua.indexOf("chrome")>0) {
+            return "chrome";
+        }
+        else if(ua.indexOf("firefox")>0){
+            return "firefox";
+        }
+        else if(ua.indexOf("safari")>0) {
+            return "safari";
+        } 
+        else {
+            return "";
+        } 
+    },
+    
+    targetObject: function(event)
+    {
+        if(this.getBrowserIndent() != "firefox") {
+            return event.target ;
+        }
+        else {
+            return event.originalTarget ;
+        }
+    }
+}; 
+
+</script>
+<!--vcuextensionconfig -->
+<script type="text/javascript">
+   
+var vcuExtensionConfig = {
+    //  Invoke Protocol
+    getInvokeProtocol : function() {
+        return "wsytd://" ; 
+    },
+    
+    //  Download Button Position
+    getDownloadButtonPosition : function () {
+        return AttachStyleEnum.AttachOuterTopRight ;
+    },
+}; 
+
+</script>
+
+
+
+<!--
+    HOW TO USE THIS DOCUMENT
+    ========================
+
+     -> Replace the ten numbered and commented out areas with your site's data.
+     -> Extend the established blocks in admin/admin.html and other templates.
+    -->
+<title>FanSee</title>
+<link href="http://fonts.googleapis.com/css?family=Lato:300,400"
+	rel="stylesheet" type="text/css">
+<link
+	href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
+	rel="stylesheet">
+<style type="text/css">
+@font-face {
+	font-family: 'FontAwesome';
+	src: url('../fonts/fontawesome-webfont.eot?v=4.0.3');
+	src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.0.3')
+		format('embedded-opentype'),
+		url('../fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'),
+		url('../fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'),
+		url('../fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular')
+		format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.fa {
+	display: inline-block;
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+/* makes the font 33% larger relative to the icon container */
+.fa-lg {
+	font-size: 1.3333333333333333em;
+	line-height: 0.75em;
+	vertical-align: -15%;
+}
+
+.fa-2x {
+	font-size: 2em;
+}
+
+.fa-3x {
+	font-size: 3em;
+}
+
+.fa-4x {
+	font-size: 4em;
+}
+
+.fa-5x {
+	font-size: 5em;
+}
+
+.fa-fw {
+	width: 1.2857142857142858em;
+	text-align: center;
+}
+
+.fa-ul {
+	padding-left: 0;
+	margin-left: 2.142857142857143em;
+	list-style-type: none;
+}
+
+.fa-ul>li {
+	position: relative;
+}
+
+.fa-li {
+	position: absolute;
+	left: -2.142857142857143em;
+	width: 2.142857142857143em;
+	top: 0.14285714285714285em;
+	text-align: center;
+}
+
+.fa-li.fa-lg {
+	left: -1.8571428571428572em;
+}
+
+.fa-border {
+	padding: .2em .25em .15em;
+	border: solid 0.08em #eeeeee;
+	border-radius: .1em;
+}
+
+.pull-right {
+	float: right;
+}
+
+.pull-left {
+	float: left;
+}
+
+.fa.pull-left {
+	margin-right: .3em;
+}
+
+.fa.pull-right {
+	margin-left: .3em;
+}
+
+.fa-spin {
+	-webkit-animation: spin 2s infinite linear;
+	-moz-animation: spin 2s infinite linear;
+	-o-animation: spin 2s infinite linear;
+	animation: spin 2s infinite linear;
+}
+
+@
+-moz-keyframes spin { 0% {
+	-moz-transform: rotate(0deg);
+}
+
+100%
+{
+-moz-transform
+:
+ 
+rotate
+(359deg);
+
+  
+}
+}
+@
+-webkit-keyframes spin { 0% {
+	-webkit-transform: rotate(0deg);
+}
+
+100%
+{
+-webkit-transform
+:
+ 
+rotate
+(359deg);
+
+  
+}
+}
+@
+-o-keyframes spin { 0% {
+	-o-transform: rotate(0deg);
+}
+
+100%
+{
+-o-transform
+:
+ 
+rotate
+(359deg);
+
+  
+}
+}
+@
+-ms-keyframes spin { 0% {
+	-ms-transform: rotate(0deg);
+}
+
+100%
+{
+-ms-transform
+:
+ 
+rotate
+(359deg);
+
+  
+}
+}
+@
+keyframes spin { 0% {
+	transform: rotate(0deg);
+}
+
+100%
+{
+transform
+:
+ 
+rotate
+(359deg);
+
+  
+}
+}
+.fa-rotate-90 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+
+.fa-rotate-180 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+.fa-rotate-270 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	-webkit-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	transform: rotate(270deg);
+}
+
+.fa-flip-horizontal {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
+	-webkit-transform: scale(-1, 1);
+	-moz-transform: scale(-1, 1);
+	-ms-transform: scale(-1, 1);
+	-o-transform: scale(-1, 1);
+	transform: scale(-1, 1);
+}
+
+.fa-flip-vertical {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+	-webkit-transform: scale(1, -1);
+	-moz-transform: scale(1, -1);
+	-ms-transform: scale(1, -1);
+	-o-transform: scale(1, -1);
+	transform: scale(1, -1);
+}
+
+.fa-stack {
+	position: relative;
+	display: inline-block;
+	width: 2em;
+	height: 2em;
+	line-height: 2em;
+	vertical-align: middle;
+}
+
+.fa-stack-1x, .fa-stack-2x {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.fa-stack-1x {
+	line-height: inherit;
+}
+
+.fa-stack-2x {
+	font-size: 2em;
+}
+
+.fa-inverse {
+	color: #ffffff;
+}
+/* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
+   readers do not read off random characters that represent icons */
+.fa-glass:before {
+	content: "\f000";
+}
+
+.fa-music:before {
+	content: "\f001";
+}
+
+.fa-search:before {
+	content: "\f002";
+}
+
+.fa-envelope-o:before {
+	content: "\f003";
+}
+
+.fa-heart:before {
+	content: "\f004";
+}
+
+.fa-star:before {
+	content: "\f005";
+}
+
+.fa-star-o:before {
+	content: "\f006";
+}
+
+.fa-user:before {
+	content: "\f007";
+}
+
+.fa-film:before {
+	content: "\f008";
+}
+
+.fa-th-large:before {
+	content: "\f009";
+}
+
+.fa-th:before {
+	content: "\f00a";
+}
+
+.fa-th-list:before {
+	content: "\f00b";
+}
+
+.fa-check:before {
+	content: "\f00c";
+}
+
+.fa-times:before {
+	content: "\f00d";
+}
+
+.fa-search-plus:before {
+	content: "\f00e";
+}
+
+.fa-search-minus:before {
+	content: "\f010";
+}
+
+.fa-power-off:before {
+	content: "\f011";
+}
+
+.fa-signal:before {
+	content: "\f012";
+}
+
+.fa-gear:before, .fa-cog:before {
+	content: "\f013";
+}
+
+.fa-trash-o:before {
+	content: "\f014";
+}
+
+.fa-home:before {
+	content: "\f015";
+}
+
+.fa-file-o:before {
+	content: "\f016";
+}
+
+.fa-clock-o:before {
+	content: "\f017";
+}
+
+.fa-road:before {
+	content: "\f018";
+}
+
+.fa-download:before {
+	content: "\f019";
+}
+
+.fa-arrow-circle-o-down:before {
+	content: "\f01a";
+}
+
+.fa-arrow-circle-o-up:before {
+	content: "\f01b";
+}
+
+.fa-inbox:before {
+	content: "\f01c";
+}
+
+.fa-play-circle-o:before {
+	content: "\f01d";
+}
+
+.fa-rotate-right:before, .fa-repeat:before {
+	content: "\f01e";
+}
+
+.fa-refresh:before {
+	content: "\f021";
+}
+
+.fa-list-alt:before {
+	content: "\f022";
+}
+
+.fa-lock:before {
+	content: "\f023";
+}
+
+.fa-flag:before {
+	content: "\f024";
+}
+
+.fa-headphones:before {
+	content: "\f025";
+}
+
+.fa-volume-off:before {
+	content: "\f026";
+}
+
+.fa-volume-down:before {
+	content: "\f027";
+}
+
+.fa-volume-up:before {
+	content: "\f028";
+}
+
+.fa-qrcode:before {
+	content: "\f029";
+}
+
+.fa-barcode:before {
+	content: "\f02a";
+}
+
+.fa-tag:before {
+	content: "\f02b";
+}
+
+.fa-tags:before {
+	content: "\f02c";
+}
+
+.fa-book:before {
+	content: "\f02d";
+}
+
+.fa-bookmark:before {
+	content: "\f02e";
+}
+
+.fa-print:before {
+	content: "\f02f";
+}
+
+.fa-camera:before {
+	content: "\f030";
+}
+
+.fa-font:before {
+	content: "\f031";
+}
+
+.fa-bold:before {
+	content: "\f032";
+}
+
+.fa-italic:before {
+	content: "\f033";
+}
+
+.fa-text-height:before {
+	content: "\f034";
+}
+
+.fa-text-width:before {
+	content: "\f035";
+}
+
+.fa-align-left:before {
+	content: "\f036";
+}
+
+.fa-align-center:before {
+	content: "\f037";
+}
+
+.fa-align-right:before {
+	content: "\f038";
+}
+
+.fa-align-justify:before {
+	content: "\f039";
+}
+
+.fa-list:before {
+	content: "\f03a";
+}
+
+.fa-dedent:before, .fa-outdent:before {
+	content: "\f03b";
+}
+
+.fa-indent:before {
+	content: "\f03c";
+}
+
+.fa-video-camera:before {
+	content: "\f03d";
+}
+
+.fa-picture-o:before {
+	content: "\f03e";
+}
+
+.fa-pencil:before {
+	content: "\f040";
+}
+
+.fa-map-marker:before {
+	content: "\f041";
+}
+
+.fa-adjust:before {
+	content: "\f042";
+}
+
+.fa-tint:before {
+	content: "\f043";
+}
+
+.fa-edit:before, .fa-pencil-square-o:before {
+	content: "\f044";
+}
+
+.fa-share-square-o:before {
+	content: "\f045";
+}
+
+.fa-check-square-o:before {
+	content: "\f046";
+}
+
+.fa-arrows:before {
+	content: "\f047";
+}
+
+.fa-step-backward:before {
+	content: "\f048";
+}
+
+.fa-fast-backward:before {
+	content: "\f049";
+}
+
+.fa-backward:before {
+	content: "\f04a";
+}
+
+.fa-play:before {
+	content: "\f04b";
+}
+
+.fa-pause:before {
+	content: "\f04c";
+}
+
+.fa-stop:before {
+	content: "\f04d";
+}
+
+.fa-forward:before {
+	content: "\f04e";
+}
+
+.fa-fast-forward:before {
+	content: "\f050";
+}
+
+.fa-step-forward:before {
+	content: "\f051";
+}
+
+.fa-eject:before {
+	content: "\f052";
+}
+
+.fa-chevron-left:before {
+	content: "\f053";
+}
+
+.fa-chevron-right:before {
+	content: "\f054";
+}
+
+.fa-plus-circle:before {
+	content: "\f055";
+}
+
+.fa-minus-circle:before {
+	content: "\f056";
+}
+
+.fa-times-circle:before {
+	content: "\f057";
+}
+
+.fa-check-circle:before {
+	content: "\f058";
+}
+
+.fa-question-circle:before {
+	content: "\f059";
+}
+
+.fa-info-circle:before {
+	content: "\f05a";
+}
+
+.fa-crosshairs:before {
+	content: "\f05b";
+}
+
+.fa-times-circle-o:before {
+	content: "\f05c";
+}
+
+.fa-check-circle-o:before {
+	content: "\f05d";
+}
+
+.fa-ban:before {
+	content: "\f05e";
+}
+
+.fa-arrow-left:before {
+	content: "\f060";
+}
+
+.fa-arrow-right:before {
+	content: "\f061";
+}
+
+.fa-arrow-up:before {
+	content: "\f062";
+}
+
+.fa-arrow-down:before {
+	content: "\f063";
+}
+
+.fa-mail-forward:before, .fa-share:before {
+	content: "\f064";
+}
+
+.fa-expand:before {
+	content: "\f065";
+}
+
+.fa-compress:before {
+	content: "\f066";
+}
+
+.fa-plus:before {
+	content: "\f067";
+}
+
+.fa-minus:before {
+	content: "\f068";
+}
+
+.fa-asterisk:before {
+	content: "\f069";
+}
+
+.fa-exclamation-circle:before {
+	content: "\f06a";
+}
+
+.fa-gift:before {
+	content: "\f06b";
+}
+
+.fa-leaf:before {
+	content: "\f06c";
+}
+
+.fa-fire:before {
+	content: "\f06d";
+}
+
+.fa-eye:before {
+	content: "\f06e";
+}
+
+.fa-eye-slash:before {
+	content: "\f070";
+}
+
+.fa-warning:before, .fa-exclamation-triangle:before {
+	content: "\f071";
+}
+
+.fa-plane:before {
+	content: "\f072";
+}
+
+.fa-calendar:before {
+	content: "\f073";
+}
+
+.fa-random:before {
+	content: "\f074";
+}
+
+.fa-comment:before {
+	content: "\f075";
+}
+
+.fa-magnet:before {
+	content: "\f076";
+}
+
+.fa-chevron-up:before {
+	content: "\f077";
+}
+
+.fa-chevron-down:before {
+	content: "\f078";
+}
+
+.fa-retweet:before {
+	content: "\f079";
+}
+
+.fa-shopping-cart:before {
+	content: "\f07a";
+}
+
+.fa-folder:before {
+	content: "\f07b";
+}
+
+.fa-folder-open:before {
+	content: "\f07c";
+}
+
+.fa-arrows-v:before {
+	content: "\f07d";
+}
+
+.fa-arrows-h:before {
+	content: "\f07e";
+}
+
+.fa-bar-chart-o:before {
+	content: "\f080";
+}
+
+.fa-twitter-square:before {
+	content: "\f081";
+}
+
+.fa-facebook-square:before {
+	content: "\f082";
+}
+
+.fa-camera-retro:before {
+	content: "\f083";
+}
+
+.fa-key:before {
+	content: "\f084";
+}
+
+.fa-gears:before, .fa-cogs:before {
+	content: "\f085";
+}
+
+.fa-comments:before {
+	content: "\f086";
+}
+
+.fa-thumbs-o-up:before {
+	content: "\f087";
+}
+
+.fa-thumbs-o-down:before {
+	content: "\f088";
+}
+
+.fa-star-half:before {
+	content: "\f089";
+}
+
+.fa-heart-o:before {
+	content: "\f08a";
+}
+
+.fa-sign-out:before {
+	content: "\f08b";
+}
+
+.fa-linkedin-square:before {
+	content: "\f08c";
+}
+
+.fa-thumb-tack:before {
+	content: "\f08d";
+}
+
+.fa-external-link:before {
+	content: "\f08e";
+}
+
+.fa-sign-in:before {
+	content: "\f090";
+}
+
+.fa-trophy:before {
+	content: "\f091";
+}
+
+.fa-github-square:before {
+	content: "\f092";
+}
+
+.fa-upload:before {
+	content: "\f093";
+}
+
+.fa-lemon-o:before {
+	content: "\f094";
+}
+
+.fa-phone:before {
+	content: "\f095";
+}
+
+.fa-square-o:before {
+	content: "\f096";
+}
+
+.fa-bookmark-o:before {
+	content: "\f097";
+}
+
+.fa-phone-square:before {
+	content: "\f098";
+}
+
+.fa-twitter:before {
+	content: "\f099";
+}
+
+.fa-facebook:before {
+	content: "\f09a";
+}
+
+.fa-github:before {
+	content: "\f09b";
+}
+
+.fa-unlock:before {
+	content: "\f09c";
+}
+
+.fa-credit-card:before {
+	content: "\f09d";
+}
+
+.fa-rss:before {
+	content: "\f09e";
+}
+
+.fa-hdd-o:before {
+	content: "\f0a0";
+}
+
+.fa-bullhorn:before {
+	content: "\f0a1";
+}
+
+.fa-bell:before {
+	content: "\f0f3";
+}
+
+.fa-certificate:before {
+	content: "\f0a3";
+}
+
+.fa-hand-o-right:before {
+	content: "\f0a4";
+}
+
+.fa-hand-o-left:before {
+	content: "\f0a5";
+}
+
+.fa-hand-o-up:before {
+	content: "\f0a6";
+}
+
+.fa-hand-o-down:before {
+	content: "\f0a7";
+}
+
+.fa-arrow-circle-left:before {
+	content: "\f0a8";
+}
+
+.fa-arrow-circle-right:before {
+	content: "\f0a9";
+}
+
+.fa-arrow-circle-up:before {
+	content: "\f0aa";
+}
+
+.fa-arrow-circle-down:before {
+	content: "\f0ab";
+}
+
+.fa-globe:before {
+	content: "\f0ac";
+}
+
+.fa-wrench:before {
+	content: "\f0ad";
+}
+
+.fa-tasks:before {
+	content: "\f0ae";
+}
+
+.fa-filter:before {
+	content: "\f0b0";
+}
+
+.fa-briefcase:before {
+	content: "\f0b1";
+}
+
+.fa-arrows-alt:before {
+	content: "\f0b2";
+}
+
+.fa-group:before, .fa-users:before {
+	content: "\f0c0";
+}
+
+.fa-chain:before, .fa-link:before {
+	content: "\f0c1";
+}
+
+.fa-cloud:before {
+	content: "\f0c2";
+}
+
+.fa-flask:before {
+	content: "\f0c3";
+}
+
+.fa-cut:before, .fa-scissors:before {
+	content: "\f0c4";
+}
+
+.fa-copy:before, .fa-files-o:before {
+	content: "\f0c5";
+}
+
+.fa-paperclip:before {
+	content: "\f0c6";
+}
+
+.fa-save:before, .fa-floppy-o:before {
+	content: "\f0c7";
+}
+
+.fa-square:before {
+	content: "\f0c8";
+}
+
+.fa-bars:before {
+	content: "\f0c9";
+}
+
+.fa-list-ul:before {
+	content: "\f0ca";
+}
+
+.fa-list-ol:before {
+	content: "\f0cb";
+}
+
+.fa-strikethrough:before {
+	content: "\f0cc";
+}
+
+.fa-underline:before {
+	content: "\f0cd";
+}
+
+.fa-table:before {
+	content: "\f0ce";
+}
+
+.fa-magic:before {
+	content: "\f0d0";
+}
+
+.fa-truck:before {
+	content: "\f0d1";
+}
+
+.fa-pinterest:before {
+	content: "\f0d2";
+}
+
+.fa-pinterest-square:before {
+	content: "\f0d3";
+}
+
+.fa-google-plus-square:before {
+	content: "\f0d4";
+}
+
+.fa-google-plus:before {
+	content: "\f0d5";
+}
+
+.fa-money:before {
+	content: "\f0d6";
+}
+
+.fa-caret-down:before {
+	content: "\f0d7";
+}
+
+.fa-caret-up:before {
+	content: "\f0d8";
+}
+
+.fa-caret-left:before {
+	content: "\f0d9";
+}
+
+.fa-caret-right:before {
+	content: "\f0da";
+}
+
+.fa-columns:before {
+	content: "\f0db";
+}
+
+.fa-unsorted:before, .fa-sort:before {
+	content: "\f0dc";
+}
+
+.fa-sort-down:before, .fa-sort-asc:before {
+	content: "\f0dd";
+}
+
+.fa-sort-up:before, .fa-sort-desc:before {
+	content: "\f0de";
+}
+
+.fa-envelope:before {
+	content: "\f0e0";
+}
+
+.fa-linkedin:before {
+	content: "\f0e1";
+}
+
+.fa-rotate-left:before, .fa-undo:before {
+	content: "\f0e2";
+}
+
+.fa-legal:before, .fa-gavel:before {
+	content: "\f0e3";
+}
+
+.fa-dashboard:before, .fa-tachometer:before {
+	content: "\f0e4";
+}
+
+.fa-comment-o:before {
+	content: "\f0e5";
+}
+
+.fa-comments-o:before {
+	content: "\f0e6";
+}
+
+.fa-flash:before, .fa-bolt:before {
+	content: "\f0e7";
+}
+
+.fa-sitemap:before {
+	content: "\f0e8";
+}
+
+.fa-umbrella:before {
+	content: "\f0e9";
+}
+
+.fa-paste:before, .fa-clipboard:before {
+	content: "\f0ea";
+}
+
+.fa-lightbulb-o:before {
+	content: "\f0eb";
+}
+
+.fa-exchange:before {
+	content: "\f0ec";
+}
+
+.fa-cloud-download:before {
+	content: "\f0ed";
+}
+
+.fa-cloud-upload:before {
+	content: "\f0ee";
+}
+
+.fa-user-md:before {
+	content: "\f0f0";
+}
+
+.fa-stethoscope:before {
+	content: "\f0f1";
+}
+
+.fa-suitcase:before {
+	content: "\f0f2";
+}
+
+.fa-bell-o:before {
+	content: "\f0a2";
+}
+
+.fa-coffee:before {
+	content: "\f0f4";
+}
+
+.fa-cutlery:before {
+	content: "\f0f5";
+}
+
+.fa-file-text-o:before {
+	content: "\f0f6";
+}
+
+.fa-building-o:before {
+	content: "\f0f7";
+}
+
+.fa-hospital-o:before {
+	content: "\f0f8";
+}
+
+.fa-ambulance:before {
+	content: "\f0f9";
+}
+
+.fa-medkit:before {
+	content: "\f0fa";
+}
+
+.fa-fighter-jet:before {
+	content: "\f0fb";
+}
+
+.fa-beer:before {
+	content: "\f0fc";
+}
+
+.fa-h-square:before {
+	content: "\f0fd";
+}
+
+.fa-plus-square:before {
+	content: "\f0fe";
+}
+
+.fa-angle-double-left:before {
+	content: "\f100";
+}
+
+.fa-angle-double-right:before {
+	content: "\f101";
+}
+
+.fa-angle-double-up:before {
+	content: "\f102";
+}
+
+.fa-angle-double-down:before {
+	content: "\f103";
+}
+
+.fa-angle-left:before {
+	content: "\f104";
+}
+
+.fa-angle-right:before {
+	content: "\f105";
+}
+
+.fa-angle-up:before {
+	content: "\f106";
+}
+
+.fa-angle-down:before {
+	content: "\f107";
+}
+
+.fa-desktop:before {
+	content: "\f108";
+}
+
+.fa-laptop:before {
+	content: "\f109";
+}
+
+.fa-tablet:before {
+	content: "\f10a";
+}
+
+.fa-mobile-phone:before, .fa-mobile:before {
+	content: "\f10b";
+}
+
+.fa-circle-o:before {
+	content: "\f10c";
+}
+
+.fa-quote-left:before {
+	content: "\f10d";
+}
+
+.fa-quote-right:before {
+	content: "\f10e";
+}
+
+.fa-spinner:before {
+	content: "\f110";
+}
+
+.fa-circle:before {
+	content: "\f111";
+}
+
+.fa-mail-reply:before, .fa-reply:before {
+	content: "\f112";
+}
+
+.fa-github-alt:before {
+	content: "\f113";
+}
+
+.fa-folder-o:before {
+	content: "\f114";
+}
+
+.fa-folder-open-o:before {
+	content: "\f115";
+}
+
+.fa-smile-o:before {
+	content: "\f118";
+}
+
+.fa-frown-o:before {
+	content: "\f119";
+}
+
+.fa-meh-o:before {
+	content: "\f11a";
+}
+
+.fa-gamepad:before {
+	content: "\f11b";
+}
+
+.fa-keyboard-o:before {
+	content: "\f11c";
+}
+
+.fa-flag-o:before {
+	content: "\f11d";
+}
+
+.fa-flag-checkered:before {
+	content: "\f11e";
+}
+
+.fa-terminal:before {
+	content: "\f120";
+}
+
+.fa-code:before {
+	content: "\f121";
+}
+
+.fa-reply-all:before {
+	content: "\f122";
+}
+
+.fa-mail-reply-all:before {
+	content: "\f122";
+}
+
+.fa-star-half-empty:before, .fa-star-half-full:before, .fa-star-half-o:before
+	{
+	content: "\f123";
+}
+
+.fa-location-arrow:before {
+	content: "\f124";
+}
+
+.fa-crop:before {
+	content: "\f125";
+}
+
+.fa-code-fork:before {
+	content: "\f126";
+}
+
+.fa-unlink:before, .fa-chain-broken:before {
+	content: "\f127";
+}
+
+.fa-question:before {
+	content: "\f128";
+}
+
+.fa-info:before {
+	content: "\f129";
+}
+
+.fa-exclamation:before {
+	content: "\f12a";
+}
+
+.fa-superscript:before {
+	content: "\f12b";
+}
+
+.fa-subscript:before {
+	content: "\f12c";
+}
+
+.fa-eraser:before {
+	content: "\f12d";
+}
+
+.fa-puzzle-piece:before {
+	content: "\f12e";
+}
+
+.fa-microphone:before {
+	content: "\f130";
+}
+
+.fa-microphone-slash:before {
+	content: "\f131";
+}
+
+.fa-shield:before {
+	content: "\f132";
+}
+
+.fa-calendar-o:before {
+	content: "\f133";
+}
+
+.fa-fire-extinguisher:before {
+	content: "\f134";
+}
+
+.fa-rocket:before {
+	content: "\f135";
+}
+
+.fa-maxcdn:before {
+	content: "\f136";
+}
+
+.fa-chevron-circle-left:before {
+	content: "\f137";
+}
+
+.fa-chevron-circle-right:before {
+	content: "\f138";
+}
+
+.fa-chevron-circle-up:before {
+	content: "\f139";
+}
+
+.fa-chevron-circle-down:before {
+	content: "\f13a";
+}
+
+.fa-html5:before {
+	content: "\f13b";
+}
+
+.fa-css3:before {
+	content: "\f13c";
+}
+
+.fa-anchor:before {
+	content: "\f13d";
+}
+
+.fa-unlock-alt:before {
+	content: "\f13e";
+}
+
+.fa-bullseye:before {
+	content: "\f140";
+}
+
+.fa-ellipsis-h:before {
+	content: "\f141";
+}
+
+.fa-ellipsis-v:before {
+	content: "\f142";
+}
+
+.fa-rss-square:before {
+	content: "\f143";
+}
+
+.fa-play-circle:before {
+	content: "\f144";
+}
+
+.fa-ticket:before {
+	content: "\f145";
+}
+
+.fa-minus-square:before {
+	content: "\f146";
+}
+
+.fa-minus-square-o:before {
+	content: "\f147";
+}
+
+.fa-level-up:before {
+	content: "\f148";
+}
+
+.fa-level-down:before {
+	content: "\f149";
+}
+
+.fa-check-square:before {
+	content: "\f14a";
+}
+
+.fa-pencil-square:before {
+	content: "\f14b";
+}
+
+.fa-external-link-square:before {
+	content: "\f14c";
+}
+
+.fa-share-square:before {
+	content: "\f14d";
+}
+
+.fa-compass:before {
+	content: "\f14e";
+}
+
+.fa-toggle-down:before, .fa-caret-square-o-down:before {
+	content: "\f150";
+}
+
+.fa-toggle-up:before, .fa-caret-square-o-up:before {
+	content: "\f151";
+}
+
+.fa-toggle-right:before, .fa-caret-square-o-right:before {
+	content: "\f152";
+}
+
+.fa-euro:before, .fa-eur:before {
+	content: "\f153";
+}
+
+.fa-gbp:before {
+	content: "\f154";
+}
+
+.fa-dollar:before, .fa-usd:before {
+	content: "\f155";
+}
+
+.fa-rupee:before, .fa-inr:before {
+	content: "\f156";
+}
+
+.fa-cny:before, .fa-rmb:before, .fa-yen:before, .fa-jpy:before {
+	content: "\f157";
+}
+
+.fa-ruble:before, .fa-rouble:before, .fa-rub:before {
+	content: "\f158";
+}
+
+.fa-won:before, .fa-krw:before {
+	content: "\f159";
+}
+
+.fa-bitcoin:before, .fa-btc:before {
+	content: "\f15a";
+}
+
+.fa-file:before {
+	content: "\f15b";
+}
+
+.fa-file-text:before {
+	content: "\f15c";
+}
+
+.fa-sort-alpha-asc:before {
+	content: "\f15d";
+}
+
+.fa-sort-alpha-desc:before {
+	content: "\f15e";
+}
+
+.fa-sort-amount-asc:before {
+	content: "\f160";
+}
+
+.fa-sort-amount-desc:before {
+	content: "\f161";
+}
+
+.fa-sort-numeric-asc:before {
+	content: "\f162";
+}
+
+.fa-sort-numeric-desc:before {
+	content: "\f163";
+}
+
+.fa-thumbs-up:before {
+	content: "\f164";
+}
+
+.fa-thumbs-down:before {
+	content: "\f165";
+}
+
+.fa-youtube-square:before {
+	content: "\f166";
+}
+
+.fa-youtube:before {
+	content: "\f167";
+}
+
+.fa-xing:before {
+	content: "\f168";
+}
+
+.fa-xing-square:before {
+	content: "\f169";
+}
+
+.fa-youtube-play:before {
+	content: "\f16a";
+}
+
+.fa-dropbox:before {
+	content: "\f16b";
+}
+
+.fa-stack-overflow:before {
+	content: "\f16c";
+}
+
+.fa-instagram:before {
+	content: "\f16d";
+}
+
+.fa-flickr:before {
+	content: "\f16e";
+}
+
+.fa-adn:before {
+	content: "\f170";
+}
+
+.fa-bitbucket:before {
+	content: "\f171";
+}
+
+.fa-bitbucket-square:before {
+	content: "\f172";
+}
+
+.fa-tumblr:before {
+	content: "\f173";
+}
+
+.fa-tumblr-square:before {
+	content: "\f174";
+}
+
+.fa-long-arrow-down:before {
+	content: "\f175";
+}
+
+.fa-long-arrow-up:before {
+	content: "\f176";
+}
+
+.fa-long-arrow-left:before {
+	content: "\f177";
+}
+
+.fa-long-arrow-right:before {
+	content: "\f178";
+}
+
+.fa-apple:before {
+	content: "\f179";
+}
+
+.fa-windows:before {
+	content: "\f17a";
+}
+
+.fa-android:before {
+	content: "\f17b";
+}
+
+.fa-linux:before {
+	content: "\f17c";
+}
+
+.fa-dribbble:before {
+	content: "\f17d";
+}
+
+.fa-skype:before {
+	content: "\f17e";
+}
+
+.fa-foursquare:before {
+	content: "\f180";
+}
+
+.fa-trello:before {
+	content: "\f181";
+}
+
+.fa-female:before {
+	content: "\f182";
+}
+
+.fa-male:before {
+	content: "\f183";
+}
+
+.fa-gittip:before {
+	content: "\f184";
+}
+
+.fa-sun-o:before {
+	content: "\f185";
+}
+
+.fa-moon-o:before {
+	content: "\f186";
+}
+
+.fa-archive:before {
+	content: "\f187";
+}
+
+.fa-bug:before {
+	content: "\f188";
+}
+
+.fa-vk:before {
+	content: "\f189";
+}
+
+.fa-weibo:before {
+	content: "\f18a";
+}
+
+.fa-renren:before {
+	content: "\f18b";
+}
+
+.fa-pagelines:before {
+	content: "\f18c";
+}
+
+.fa-stack-exchange:before {
+	content: "\f18d";
+}
+
+.fa-arrow-circle-o-right:before {
+	content: "\f18e";
+}
+
+.fa-arrow-circle-o-left:before {
+	content: "\f190";
+}
+
+.fa-toggle-left:before, .fa-caret-square-o-left:before {
+	content: "\f191";
+}
+
+.fa-dot-circle-o:before {
+	content: "\f192";
+}
+
+.fa-wheelchair:before {
+	content: "\f193";
+}
+
+.fa-vimeo-square:before {
+	content: "\f194";
+}
+
+.fa-turkish-lira:before, .fa-try:before {
+	content: "\f195";
+}
+
+.fa-plus-square-o:before {
+	content: "\f196";
+}
+</style>
+
+
+<link
+	href="http://fonts.googleapis.com/css?family=Roboto+Slab|Merriweather+Sans:300,400,700,400italic"
+	rel="stylesheet" type="text/css">
+<!-- Stylesheet reset -->
+<!-- reset.min.css-->
+<style type="text/css">
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+	blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,
+	em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
+	b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+	table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas,
+	details, embed, figure, figcaption, footer, header, hgroup, menu, nav,
+	output, ruby, section, summary, time, mark, audio, video {
+	outline: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+	margin: 0;
+	padding: 0
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup,
+	menu, nav, section {
+	display: block
+}
+
+body {
+	line-height: 1
+}
+
+ol, ul {
+	list-style: none
+}
+
+blockquote, q {
+	quotes: none
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+	content: none
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0
+}
+</style>
+<!-- app.css-->
+<style type="text/css">
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 3, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header {
+	margin: 0 0 0 -2rem;
+	padding: 1rem 2rem;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	z-index: 50;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+/* line 12, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header a, .header a:hover {
+	text-decoration: none !important;
+	color: inherit !important;
+}
+/* line 17, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header.fixed {
+	position: fixed;
+	z-index: 100;
+}
+/* line 21, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header.fixed.bottom {
+	position: absolute;
+	bottom: 0;
+	top: auto;
+}
+/* line 28, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header.no-spacer+.header-spacer {
+	display: none;
+}
+/* line 33, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header.blue .title, .header.blue .title {
+	text-shadow: 0 0 #111;
+	-webkit-text-shadow: 0 0 #111;
+	-moz-text-shadow: 0 0 #111;
+	color: #32437A;
+}
+/* line 36, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header.blue .title a:hover, .header.blue .title a:hover {
+	color: inherit;
+}
+/* line 40, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header.blue .subtitle, .header.blue .adjectives .adjective, .adjectives .header.blue .adjective
+	{
+	text-shadow: 0 0 #111;
+	-webkit-text-shadow: 0 0 #111;
+	-moz-text-shadow: 0 0 #111;
+	color: #282828;
+}
+/* line 46, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header .date {
+	color: #bbb;
+	text-shadow: 1px 1px #111;
+	-webkit-text-shadow: 1px 1px #111;
+	-moz-text-shadow: 1px 1px #111;
+}
+/* line 50, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header .subtitle, .header .adjectives .adjective, .adjectives .header .adjective
+	{
+	text-shadow: 1px 1px #111;
+	-webkit-text-shadow: 1px 1px #111;
+	-moz-text-shadow: 1px 1px #111;
+	margin-top: -0.5rem;
+	color: #bbb;
+	font-weight: 400;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+}
+/* line 57, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header .title {
+	text-shadow: 1px 1px #111;
+	-webkit-text-shadow: 1px 1px #111;
+	-moz-text-shadow: 1px 1px #111;
+	color: white;
+	margin-left: -0.25rem;
+	width: 100%;
+}
+/* line 65, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header .title .bold {
+	padding-right: 0.5rem;
+}
+/* line 69, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header .title a:hover {
+	color: white;
+}
+
+/* line 74, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header-spacer {
+	height: 8.5rem;
+}
+/* line 76, /Users/dan/working/devfe-st/static/scss/header.scss */
+.header-spacer.with-subtitle {
+	height: 12.5rem;
+}
+
+/* line 81, /Users/dan/working/devfe-st/static/scss/header.scss */
+.adjectives {
+	display: inline !important;
+}
+/* line 84, /Users/dan/working/devfe-st/static/scss/header.scss */
+.adjectives .adjective {
+	display: none;
+}
+/* line 88, /Users/dan/working/devfe-st/static/scss/header.scss */
+.adjectives .adjective.active {
+	display: inline;
+}
+
+/* line 94, /Users/dan/working/devfe-st/static/scss/header.scss */
+.fixed-spacer {
+	height: 15rem;
+	width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+	/* line 100, /Users/dan/working/devfe-st/static/scss/header.scss */
+	.title {
+		font-size: 3rem !important;
+		line-height: 4rem !important;
+	}
+
+	/* line 104, /Users/dan/working/devfe-st/static/scss/header.scss */
+	.subtitle, .adjectives .adjective {
+		font-size: 2rem !important;
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 7, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 18rem;
+	background-color: #282828;
+	color: white;
+	z-index: 1000;
+	height: 100%;
+	height: 100vh;
+}
+/* line 19, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav .ham {
+	position: absolute;
+	top: 0;
+	left: -50px;
+	height: 50px;
+	width: 50px;
+	background-color: #282828;
+}
+/* line 27, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav .ham .bar {
+	-webkit-transition: 0.3s 0 ease all;
+	-moz-transition: 0.3s 0 ease all;
+	-o-transition: 0.3s 0 ease all;
+	transition: 0.3s 0 ease all;
+	-webkit-transform-origin: 2px 2px;
+	-ms-transform-origin: 2px 2px;
+	transform-origin: 2px 2px;
+	position: absolute;
+	background-color: white;
+	height: 4px;
+	left: 16px;
+	right: 16px;
+	border-radius: 2px;
+	margin: 0 -2px;
+}
+/* line 38, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav .ham .bar.one {
+	margin-top: -2px;
+	top: 16px;
+}
+/* line 42, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav .ham .bar.two {
+	top: 23px;
+}
+/* line 45, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav .ham .bar.three {
+	bottom: 16px;
+	margin-bottom: -2px;
+}
+/* line 52, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav.fixed {
+	position: fixed;
+}
+/* line 55, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav small h1 {
+	padding: 1.25rem 2rem;
+	font-size: 2rem;
+	line-height: 2rem;
+}
+/* line 60, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav .bottom-spacer {
+	height: 5rem;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav .logo {
+	padding: 1rem 1.4rem 0;
+}
+/* line 67, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav>.outer {
+	overflow-y: scroll;
+	height: 100%;
+	position: relative;
+}
+/* line 72, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav>.outer>.inner {
+	height: auto;
+	min-height: 100%;
+	position: relative;
+}
+/* line 79, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav>.outer::-webkit-scrollbar {
+	display: none;
+}
+/* line 84, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul {
+	width: 18rem;
+	width: 100%;
+	position: relative;
+	z-index: 1000;
+}
+/* line 90, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul li {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 100%;
+	z-index: 1000;
+}
+/* line 94, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul li a p {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 1rem 2rem;
+	width: 100%;
+	margin-bottom: 0;
+}
+/* line 99, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul li a p:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+/* line 104, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul.bottom {
+	position: absolute;
+	bottom: 0;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+nav ul.triple:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 110, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul.triple li {
+	width: 33.333333%;
+	display: inline-block;
+	float: left;
+}
+/* line 114, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul.triple li:first-child {
+	text-align: left;
+}
+/* line 117, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul.triple li:nth-child(2) {
+	text-align: center;
+}
+/* line 119, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul.triple li:nth-child(2) a p {
+	padding: 1rem 0;
+}
+/* line 123, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+nav ul.triple li:nth-child(3) {
+	text-align: right;
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 132, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+	nav {
+		-webkit-transition: 0.3s 0 ease all;
+		-moz-transition: 0.3s 0 ease all;
+		-o-transition: 0.3s 0 ease all;
+		transition: 0.3s 0 ease all;
+		position: fixed;
+		right: -18rem !important;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		height: auto;
+	}
+	/* line 141, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+	nav.open {
+		right: 0 !important;
+	}
+	/* line 145, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+	nav.open .ham .bar {
+		width: 30px;
+	}
+	/* line 147, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+	nav.open .ham .bar.one {
+		-webkit-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+	/* line 150, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+	nav.open .ham .bar.two {
+		opacity: 0;
+	}
+	/* line 153, /Users/dan/working/devfe-st/static/scss/navbar.scss */
+	nav.open .ham .bar.three {
+		-webkit-transform: rotate(-45deg);
+		-ms-transform: rotate(-45deg);
+		transform: rotate(-45deg);
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 3, /Users/dan/working/devfe-st/static/scss/footer.scss */
+footer {
+	padding: 2rem 18rem 2rem 0;
+	background-color: #32437A;
+	color: white;
+	text-align: center;
+}
+/* line 8, /Users/dan/working/devfe-st/static/scss/footer.scss */
+footer>.inner {
+	margin: 0 auto;
+	max-width: 75rem;
+	width: 100%;
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/footer.scss */
+footer a, footer a:hover {
+	text-decoration: underline;
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 3, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button {
+	position: relative;
+	padding: 1rem 3rem;
+	display: inline-block;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	background-color: #32437A;
+	color: white;
+	text-decoration: none !important;
+}
+/* line 11, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button:hover {
+	text-decoration: none !important;
+	cursor: pointer;
+}
+/* line 16, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button.full {
+	display: block;
+	text-align: center;
+}
+/* line 21, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button.inverse {
+	border: 1px solid #32437A;
+	color: inherit;
+	background-color: transparent;
+}
+/* line 25, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button.inverse:hover {
+	background-color: #32437A;
+	color: white;
+}
+/* line 31, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button.white {
+	background-color: white;
+	color: #111;
+}
+/* line 35, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button.white-inverse {
+	border: 1px solid white;
+	color: white;
+	background-color: transparent;
+}
+/* line 39, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button.white-inverse:hover {
+	background-color: white;
+	color: #111;
+}
+/* line 45, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button a {
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+}
+/* line 49, /Users/dan/working/devfe-st/static/scss/buttons.scss */
+.button a:hover {
+	color: inherit;
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 3, /Users/dan/working/devfe-st/static/scss/registration.scss */
+p.focus {
+	text-transform: none !important;
+	margin: 0 auto 2rem;
+}
+/* line 7, /Users/dan/working/devfe-st/static/scss/registration.scss */
+p.focus.focus-centered {
+	text-align: center;
+}
+/* line 10, /Users/dan/working/devfe-st/static/scss/registration.scss */
+p.focus .button {
+	text-decoration: none !important;
+}
+
+/* line 15, /Users/dan/working/devfe-st/static/scss/registration.scss */
+.scroll-down {
+	position: absolute;
+	bottom: 3rem;
+	width: 10rem;
+	left: 50%;
+	margin-left: -5rem;
+	text-align: center;
+	opacity: 0;
+}
+/* line 23, /Users/dan/working/devfe-st/static/scss/registration.scss */
+.scroll-down a {
+	text-decoration: none !important;
+}
+/* line 26, /Users/dan/working/devfe-st/static/scss/registration.scss */
+.scroll-down p {
+	margin: 0;
+	line-height: 1.2rem;
+}
+
+/* line 32, /Users/dan/working/devfe-st/static/scss/registration.scss */
+.centered {
+	max-width: 75rem;
+	padding: 20rem 0 0;
+	margin: 0 auto;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/registration.scss */
+#register {
+	height: 200%;
+	min-height: 100rem;
+	position: relative;
+}
+/* line 42, /Users/dan/working/devfe-st/static/scss/registration.scss */
+#register>.inner {
+	height: 100%;
+	background-color: rgba(50, 67, 122, 0.5);
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+/* line 55, /Users/dan/working/devfe-st/static/scss/registration.scss */
+#registration-form {
+	position: relative;
+}
+/* line 57, /Users/dan/working/devfe-st/static/scss/registration.scss */
+#registration-form .submit-success {
+	position: absolute;
+	right: -1rem;
+	top: 1rem;
+	font-size: 2.5rem;
+	line-height: 3.5rem;
+	vertical-align: middle;
+	padding: 0.3125rem;
+}
+/* line 67, /Users/dan/working/devfe-st/static/scss/registration.scss */
+#registration-form input {
+	background-color: transparent;
+	border: 0;
+	text-align: center;
+	text-shadow: 1px 1px #111;
+	-webkit-text-shadow: 1px 1px #111;
+	-moz-text-shadow: 1px 1px #111;
+	border-bottom: 1px solid white;
+	color: white;
+	outline: 0;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+}
+
+/* line 80, /Users/dan/working/devfe-st/static/scss/registration.scss */
+.registration {
+	position: absolute;
+	height: 2rem;
+	width: 30rem;
+	left: 50%;
+	margin-left: -15rem;
+	right: 0;
+	bottom: 20rem;
+	opacity: 0;
+	text-align: center;
+}
+/* line 90, /Users/dan/working/devfe-st/static/scss/registration.scss */
+.registration label {
+	display: block;
+	margin-top: 1rem;
+	text-shadow: 1px 1px #111;
+	-webkit-text-shadow: 1px 1px #111;
+	-moz-text-shadow: 1px 1px #111;
+}
+/* line 95, /Users/dan/working/devfe-st/static/scss/registration.scss */
+.registration input {
+	width: 30rem;
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 101, /Users/dan/working/devfe-st/static/scss/registration.scss */
+	.centered {
+		padding-top: 20rem;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 107, /Users/dan/working/devfe-st/static/scss/registration.scss */
+	.centered {
+		padding-top: 10rem;
+	}
+
+	/* line 110, /Users/dan/working/devfe-st/static/scss/registration.scss */
+	p.focus {
+		width: 90%;
+		margin-bottom: 2rem;
+		font-size: 1.2rem !important;
+		line-height: 2rem !important;
+	}
+}
+
+@media screen and (max-height: 479px) {
+	/* line 119, /Users/dan/working/devfe-st/static/scss/registration.scss */
+	.registration {
+		bottom: 12rem;
+	}
+
+	/* line 122, /Users/dan/working/devfe-st/static/scss/registration.scss */
+	.centered {
+		padding-top: 2rem;
+	}
+	/* line 124, /Users/dan/working/devfe-st/static/scss/registration.scss */
+	.centered br {
+		display: none;
+	}
+}
+/* line 1, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.sponsors {
+	text-align: center;
+}
+
+/* line 5, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+#sponsors h4 {
+	margin-bottom: 3rem;
+	text-align: center;
+}
+
+/* line 10, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold, .silver, .bronze {
+	display: inline-block;
+	padding: 0 10px 10px 10px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+/* line 15, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold>.inner, .silver>.inner, .bronze>.inner {
+	vertical-align: middle;
+	max-width: 100%;
+	text-align: center;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+/* line 22, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold>.inner>a, .silver>.inner>a, .bronze>.inner>a {
+	max-width: 100%;
+}
+/* line 24, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold>.inner>a>img, .silver>.inner>a>img, .bronze>.inner>a>img {
+	max-width: 100%;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold {
+	width: 600px;
+	height: 150px;
+	max-width: 100%;
+	display: block;
+	margin: 10px auto 0;
+}
+/* line 41, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold>.inner {
+	width: 600px;
+	height: 150px;
+	max-width: 100%;
+	margin: 0 auto;
+}
+/* line 47, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold>.inner>a {
+	height: 150px;
+}
+/* line 50, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.gold>.inner>a>img {
+	max-width: 100%;
+	max-height: 150px;
+	margin: 0 auto;
+}
+
+/* line 61, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.silver {
+	width: 45%;
+	height: 150px;
+	max-width: 100%;
+}
+/* line 66, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.silver>.inner {
+	width: 400px;
+	height: 150px;
+}
+/* line 70, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.silver>.inner>a {
+	width: 400px;
+	height: 150px;
+}
+/* line 74, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.silver>.inner>a>img {
+	max-width: 400px;
+	max-height: 150px;
+	margin: 0 auto;
+}
+
+/* line 86, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.bronze {
+	width: 30%;
+	height: 80px;
+}
+/* line 90, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.bronze>.inner {
+	width: 200px;
+	height: 80px;
+}
+/* line 94, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.bronze>.inner>a {
+	width: 200px;
+	height: 80px;
+}
+/* line 98, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+.bronze>.inner>a>img {
+	max-width: 200px;
+	max-height: 80px;
+	margin: 0 auto;
+}
+
+@media screen and (max-width: 640px) {
+	/* line 109, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+	.gold, .silver {
+		width: 100%;
+	}
+	/* line 111, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+	.gold>.inner>a>img, .silver>.inner>a>img {
+		max-width: 100%;
+	}
+
+	/* line 115, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+	.bronze {
+		width: 45%;
+	}
+	/* line 117, /Users/dan/working/devfe-st/static/scss/sponsors.scss */
+	.bronze>.inner>a>img {
+		max-width: 100%;
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 8, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.days-longform {
+	padding-left: 20rem;
+	margin-top: -3rem;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.days-longform .day:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.days-longform .day h2 {
+	padding-top: 1rem;
+	margin-top: 1rem;
+}
+/* line 18, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.days-longform .day .events {
+	margin: 1rem 0;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.days-longform .day .events:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 22, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.days-longform .day .event {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	padding-top: 1rem;
+}
+/* line 25, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.days-longform .day .event h5 {
+	margin: 0;
+}
+/* line 28, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.days-longform .day .event img {
+	height: 5rem;
+	display: block;
+	margin: 0 auto;
+}
+/* line 34, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.days-longform .day .subsection {
+	margin-top: 2rem;
+	padding-right: 1rem;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	float: left;
+	width: 50%;
+	display: inline-block;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 20rem;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	background-color: #f5f5f5;
+	overflow: scroll;
+}
+/* line 54, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar>.inner {
+	padding-top: 8.5rem;
+}
+/* line 59, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar .day h4 {
+	background-color: #e5e5e5;
+	padding: 0.5rem 1rem;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar .day a, .shortform-sidebar .day a:hover {
+	text-decoration: none !important;
+	color: inherit !important;
+}
+/* line 67, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar .day .events {
+	padding: 0.5rem 0;
+}
+/* line 70, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar .day .events strong {
+	padding: 1rem 1rem 0rem;
+	display: block;
+}
+/* line 74, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar .day .events .event {
+	padding: 0 1rem;
+}
+/* line 76, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar .day .events .event p {
+	margin: 0;
+}
+/* line 79, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar .day .events .event:hover {
+	background-color: #e5e5e5;
+}
+/* line 85, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar.fixed {
+	position: fixed;
+}
+/* line 88, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar.fixed.bottom {
+	position: absolute;
+	bottom: 0;
+}
+/* line 91, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar.fixed.bottom>.inner {
+	position: absolute;
+	bottom: 0;
+}
+/* line 97, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+.shortform-sidebar::-webkit-scrollbar {
+	display: none;
+}
+
+@media screen and (max-width: 640px) {
+	/* line 103, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+	.shortform-sidebar {
+		display: none;
+	}
+
+	/* line 106, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+	.days-longform {
+		padding-left: 0;
+	}
+	/* line 109, /Users/dan/working/devfe-st/static/scss/schedule.scss */
+	.days-longform .day .subsection {
+		width: 100%;
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 4, /Users/dan/working/devfe-st/static/scss/judges.scss */
+.judges .judge, .speakers .judge {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 1rem;
+	float: left;
+	display: inline-block;
+}
+/* line 10, /Users/dan/working/devfe-st/static/scss/judges.scss */
+.judges .judge img, .speakers .judge img {
+	width: 100%;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.judges .three-judges:after, .speakers .three-judges:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 16, /Users/dan/working/devfe-st/static/scss/judges.scss */
+.judges .three-judges .judge, .speakers .three-judges .judge {
+	width: 33.333333%;
+}
+/* line 20, /Users/dan/working/devfe-st/static/scss/judges.scss */
+.judges .two-judges, .judges .two-speakers, .speakers .two-judges,
+	.speakers .two-speakers {
+	margin-left: 16.666666%;
+	margin-right: 16.666666%;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.judges .two-judges:after, .judges .two-speakers:after, .speakers .two-judges:after,
+	.speakers .two-speakers:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 24, /Users/dan/working/devfe-st/static/scss/judges.scss */
+.judges .two-judges .judge, .judges .two-speakers .judge, .speakers .two-judges .judge,
+	.speakers .two-speakers .judge {
+	width: 50%;
+}
+
+@media screen and (max-width: 640px) {
+	/* line 37, /Users/dan/working/devfe-st/static/scss/judges.scss */
+	.judges .two-judges, .judges .three-judges, .speakers .two-speakers {
+		margin: 0;
+	}
+	/* line 39, /Users/dan/working/devfe-st/static/scss/judges.scss */
+	.judges .two-judges .judge, .judges .three-judges .judge, .speakers .two-speakers .judge
+		{
+		width: 100%;
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.faqs .two-faqs:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 7, /Users/dan/working/devfe-st/static/scss/faq.scss */
+.faqs .two-faqs:not (:first-child ) {
+	margin-top: 2rem;
+}
+/* line 11, /Users/dan/working/devfe-st/static/scss/faq.scss */
+.faqs .two-faqs .faq {
+	width: 50%;
+	float: left;
+	display: inline-block;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+/* line 17, /Users/dan/working/devfe-st/static/scss/faq.scss */
+.faqs .two-faqs .faq:first-child {
+	padding-right: 1rem;
+}
+/* line 20, /Users/dan/working/devfe-st/static/scss/faq.scss */
+.faqs .two-faqs .faq:nth-child(2) {
+	padding-left: 1rem;
+}
+
+/* line 28, /Users/dan/working/devfe-st/static/scss/faq.scss */
+.featured-faqs {
+	margin: 0 auto;
+	width: 100%;
+	max-width: 60rem;
+	margin-bottom: 4rem;
+}
+/* line 34, /Users/dan/working/devfe-st/static/scss/faq.scss */
+.featured-faqs .faq h2 {
+	margin-bottom: 1rem;
+	font-family: "Roboto Slab", Georgia, serif;
+}
+
+@media screen and (max-width: 640px) {
+	/* line 43, /Users/dan/working/devfe-st/static/scss/faq.scss */
+	.faqs .two-faqs {
+		margin-top: 0 !important;
+	}
+	/* line 45, /Users/dan/working/devfe-st/static/scss/faq.scss */
+	.faqs .two-faqs .faq {
+		width: 100%;
+		margin-top: 1rem;
+		padding: 0 !important;
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 3, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+.track {
+	width: 50%;
+	padding: 1rem;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	display: inline-block;
+	float: left;
+}
+/* line 10, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+.track>.inner {
+	border: 1px solid #32437A;
+	padding: 1rem;
+}
+/* line 15, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+.track ol {
+	list-style: decimal;
+	list-style-position: outside;
+	margin-left: 3rem;
+	padding: 2rem 0;
+	vertical-align: top;
+}
+/* line 22, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+.track ol li {
+	margin-bottom: 1.5rem;
+}
+
+/* line 28, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+.two-tracks {
+	margin: 0 -1rem;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.two-tracks:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+
+@media screen and (max-width: 640px) {
+	/* line 35, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+	.two-tracks {
+		margin: 0;
+	}
+	/* line 38, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+	.two-tracks .track {
+		padding: 0;
+		width: 100%;
+		display: block;
+		margin-top: 1rem;
+	}
+	/* line 44, /Users/dan/working/devfe-st/static/scss/curriculum.scss */
+	.two-tracks .track ol {
+		padding: 1rem 0 0;
+	}
+}
+
+@
+-webkit-keyframes fade-in-up { 0% {
+	opacity: 0;
+	-webkit-transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+-webkit-transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+@
+keyframes fade-in-up { 0% {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+100%
+{
+opacity
+:
+ 
+1;
+transform
+:
+ 
+translateY
+(0);
+
+  
+}
+}
+/* line 30, /Users/dan/working/devfe-st/static/scss/animations.scss */
+.fade-in-up {
+	-webkit-animation-name: fade-in-up;
+	animation-name: fade-in-up;
+}
+
+/* line 3, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.background-image, .pages .page, .background {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* line 9, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.upper, .header .title {
+	text-transform: uppercase;
+}
+
+/* line 13, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.center {
+	text-align: center;
+}
+
+/* line 34, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.animated {
+	-webkit-animation-duration: 0.5s;
+	animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+/* line 82, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.hidden {
+	display: none;
+}
+
+@media screen and (min-width: 1025px) {
+	/* line 87, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-desktop {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 641px) {
+	/* line 93, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.phone-only {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 99, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-tablet {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	/* line 105, /Users/dan/working/devfe-st/static/scss/utils.scss */
+	.hidden-phone {
+		display: none;
+	}
+}
+/* line 14, /Users/dan/working/devfe-st/static/scss/base.scss */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	color: #111;
+	height: 100%;
+}
+
+/* line 23, /Users/dan/working/devfe-st/static/scss/base.scss */
+p, .p, label {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+/* line 31, /Users/dan/working/devfe-st/static/scss/base.scss */
+pre {
+	margin: 1rem 0;
+	padding: 1rem;
+	background-color: white;
+	font-family: monospace;
+}
+
+/* line 38, /Users/dan/working/devfe-st/static/scss/base.scss */
+ul li {
+	font-size: 1.2rem;
+	line-height: 1.9rem;
+}
+
+/* line 43, /Users/dan/working/devfe-st/static/scss/base.scss */
+em {
+	font-style: italic;
+}
+
+/* line 45, /Users/dan/working/devfe-st/static/scss/base.scss */
+strong, .bold {
+	font-weight: 800;
+}
+
+/* line 47, /Users/dan/working/devfe-st/static/scss/base.scss */
+img {
+	max-width: 100%;
+}
+
+/* line 51, /Users/dan/working/devfe-st/static/scss/base.scss */
+hr {
+	background-color: #111;
+	margin: 4rem 0 0;
+	border: 0;
+	height: 1px;
+	outline: 0;
+}
+
+/* line 59, /Users/dan/working/devfe-st/static/scss/base.scss */
+a {
+	color: inherit;
+	text-decoration: none;
+}
+/* line 62, /Users/dan/working/devfe-st/static/scss/base.scss */
+a:hover {
+	color: #e5e5e5;
+	text-decoration: none;
+}
+
+/* line 68, /Users/dan/working/devfe-st/static/scss/base.scss */
+input, textarea {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	padding: 0.3125rem;
+}
+/* line 73, /Users/dan/working/devfe-st/static/scss/base.scss */
+input::-webkit-input-placeholder, input:-moz-placeholder, input::-moz-placeholder,
+	input:-ms-input-placeholder, textarea::-webkit-input-placeholder,
+	textarea:-moz-placeholder, textarea::-moz-placeholder, textarea:-ms-input-placeholder
+	{
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1rem;
+	color: #e5e5e5;
+}
+
+/* line 84, /Users/dan/working/devfe-st/static/scss/base.scss */
+h1, .h1, .header .title {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 6.5rem;
+	line-height: 6.5rem;
+}
+
+/* line 90, /Users/dan/working/devfe-st/static/scss/base.scss */
+h2, .h2, .adjectives .adjective {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 3.5rem;
+	line-height: 4rem;
+}
+
+/* line 96, /Users/dan/working/devfe-st/static/scss/base.scss */
+h3, .h3, p.focus, #register-button, #registration-form input, .track ol
+	{
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 300;
+	font-size: 2.2rem;
+	line-height: 3rem;
+}
+
+/* line 102, /Users/dan/working/devfe-st/static/scss/base.scss */
+h4, .h4 {
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	text-transform: uppercase;
+}
+
+/* line 109, /Users/dan/working/devfe-st/static/scss/base.scss */
+h5, .h5 {
+	font-family: "Roboto Slab", Georgia, serif;
+	font-weight: 400;
+	font-size: 1.4rem;
+	line-height: 2rem;
+	margin-bottom: 0.625rem;
+}
+
+/* line 116, /Users/dan/working/devfe-st/static/scss/base.scss */
+h6, .h6 {
+	margin-bottom: 0.3125rem;
+	font-family: "Lato", Helvetica, Ariel sans-serif;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 2rem;
+}
+
+@media screen and (max-width: 1920px) {
+	/* line 125, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 16px;
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	/* line 131, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 137, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+
+	/* line 141, /Users/dan/working/devfe-st/static/scss/base.scss */
+	h2, .h2, .adjectives .adjective {
+		font-size: 2.5rem;
+		line-height: 3rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	/* line 148, /Users/dan/working/devfe-st/static/scss/base.scss */
+	html, body {
+		font-size: 11px;
+	}
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.top-prizes:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 5, /Users/dan/working/devfe-st/static/scss/prizes.scss */
+.top-prizes .prize {
+	width: 33.333333%;
+	display: inline-block;
+	float: left;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	text-align: center;
+	padding: 2rem 1rem;
+}
+/* line 13, /Users/dan/working/devfe-st/static/scss/prizes.scss */
+.top-prizes .prize.second, .top-prizes .prize.third {
+	margin-top: 1.5rem;
+}
+
+/* line 19, /Users/dan/working/devfe-st/static/scss/prizes.scss */
+.two-prizes {
+	text-align: center;
+}
+/* line 63, /Users/dan/working/devfe-st/static/scss/utils.scss */
+.two-prizes:after {
+	clear: both;
+	content: " ";
+	display: block;
+}
+/* line 22, /Users/dan/working/devfe-st/static/scss/prizes.scss */
+.two-prizes .prize {
+	padding: 2rem 1rem;
+	width: 45%;
+	display: inline-block;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	text-align: center;
+}
+/* line 29, /Users/dan/working/devfe-st/static/scss/prizes.scss */
+.two-prizes .prize img {
+	height: 5rem;
+}
+
+@media screen and (max-width: 640px) {
+	/* line 37, /Users/dan/working/devfe-st/static/scss/prizes.scss */
+	.prize {
+		width: 100% !important;
+	}
+}
+/* line 14 */
+.pages {
+	z-index: 1;
+	width: 100%;
+	position: relative;
+	height: 100%;
+}
+/* line 19 */
+.pages .page {
+	position: relative;
+	color: white;
+}
+/* line 24 */
+.pages .page .sub-page {
+	position: relative;
+	height: 50%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+/* line 29 */
+.pages .page:first-child>.inner {
+	background-color: rgba(50, 67, 122, 0.5);
+}
+/* line 32 */
+.pages .page>.inner {
+	position: relative;
+	padding: 2rem;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+/* line 37 */
+.pages .page>.inner a {
+	text-decoration: underline;
+}
+/* line 42 */
+.pages .page.white {
+	background-color: white;
+	color: #111;
+}
+/* line 45 */
+.pages .page.white .header {
+	background-color: rgba(255, 255, 255, 0.9);
+}
+/* line 48 */
+.pages .page.white .inner a:hover {
+	color: #bbb;
+}
+/* line 53 */
+.pages .page.blue {
+	background-color: #32437A;
+	color: white;
+}
+/* line 56 */
+.pages .page.blue .header {
+	background-color: rgba(50, 67, 122, 0.9);
+}
+/* line 60 */
+.pages .page.with-nav>.inner {
+	padding-right: 20rem;
+}
+/* line 65 */
+.pages .page.with-image:not (:first-child ) {
+	height: 120%;
+	background-color: transparent;
+}
+/* line 68 */
+.pages .page.with-image:not (:first-child ) .inner {
+	height: 100%;
+	max-height: 100rem;
+}
+
+/* line 77 */
+.background {
+	position: fixed;
+	z-index: -1;
+	bottom: 0;
+	top: 0;
+	width: 100%;
+}
+/* line 85 */
+.background.with-nav {
+	right: 18rem;
+	left: 0;
+	width: auto;
+}
+/* line 90 */
+.background.with-nav .scrim {
+	background-color: rgba(0, 0, 0, 0.4);
+	width: 100%;
+	height: 100%;
+}
+/* line 96 */
+.background.with-nav .fading-logo {
+	position: absolute;
+	bottom: 20rem;
+	top: 8.5rem;
+	width: 100%;
+	opacity: 0;
+	padding: 2rem 0;
+}
+/* line 104 */
+.background.with-nav .fading-logo i {
+	height: 100%;
+	width: 100%;
+	display: block;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: contain;
+}
+
+/* line 117 */
+#code-of-conduct h3 {
+	margin-bottom: 1rem;
+}
+/* line 120 */
+#code-of-conduct .inner {
+	min-height: 25rem;
+}
+
+@media screen and (max-width: 1024px) {
+	/* line 127 */
+	.pages .page.with-nav>.inner {
+		padding-right: 1rem;
+	}
+	/* line 130 */
+	.pages .page:first-child>.inner {
+		background: -moz-linear-gradient(top, rgba(50, 67, 122, 0) 0%,
+			rgba(50, 67, 122, 0.4) 45%, #32437a 55%, #32437a 65%, #32437a 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(50,
+			67, 122, 0)), color-stop(45%, rgba(50, 67, 122, 0.4)),
+			color-stop(55%, #32437a), color-stop(65% #32437a),
+			color-stop(100% #32437a));
+		background: -webkit-linear-gradient(top, rgba(50, 67, 122, 0) 0%,
+			rgba(50, 67, 122, 0.4) 45%, #32437a 55%, #32437a 65%, #32437a 100%);
+		background: -o-linear-gradient(top, rgba(50, 67, 122, 0) 0%,
+			rgba(50, 67, 122, 0.4) 45%, #32437a 55%, #32437a 65%, #32437a 100%);
+		background: -ms-linear-gradient(top, rgba(50, 67, 122, 0) 0%,
+			rgba(50, 67, 122, 0.4) 45%, #32437a 55%, #32437a 65%, #32437a 100%);
+		background: linear-gradient(to bottom, rgba(50, 67, 122, 0) 0%,
+			rgba(50, 67, 122, 0.4) 45%, #32437a 55%, #32437a 65%, #32437a 100%);
+	}
+
+	/* line 136 */
+	.background.with-nav {
+		display: none;
+	}
+	/* line 140 */
+	.background.hidden-desktop {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		right: 0;
+		background-size: auto 75%;
+		background-position: top center;
+	}
+
+	/* line 153 */
+	#kickoff {
+		height: auto;
+	}
+	/* line 155 */
+	#kickoff .background {
+		background-size: cover;
+	}
+	/* line 158 */
+	#kickoff img {
+		margin-top: -12.5rem;
+	}
+}
+</style>
+
+<style type="text/css">
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+	blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,
+	em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
+	b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+	table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas,
+	details, embed, figure, figcaption, footer, header, hgroup, menu, nav,
+	output, ruby, section, summary, time, mark, audio, video {
+	outline: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+	margin: 0;
+	padding: 0
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup,
+	menu, nav, section {
+	display: block
+}
+
+body {
+	line-height: 1
+}
+
+ol, ul {
+	list-style: none
+}
+
+blockquote, q {
+	quotes: none
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+	content: none
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0
+}
+</style>
+<!--analytics.js-->
+
+<script async="" src="http://www.google-analytics.com/analytics.js"></script>
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script
+	src="http://cdn.jsdelivr.net/mobile-detect.js/0.4.3/mobile-detect.min.js"></script>
+
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-18504951-6', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+</head>
+
+
+
+
+
+
+
+<body>
+<div class="backgrounds hidden-tablet">
+    <div class="background"
+         data-page="1"
+         style="background-image:url(cover.jpg)">
+    </div>
+    <div class="background with-nav hidden"
+         data-page="10"
+         style="background-image:url(columbia.jpg)">
+         <div class="scrim">
+             <div class="fading-logo">
+                <i style="background-image: url(columbia.jpg);"></i>
+             </div>
+         </div>
+    </div>
+</div>
+
+
+<div class="pages" id="top">
+    <div id="register" class="page hero with-image" data-page="1">
+        <div class="background hidden-desktop"
+             style="background-image:url(cover.jpg)">
+        </div>
+        <div class="inner"><div class="header white no-spacer fixed" id="">
+    <h1 class="title">
+        <a href="/">
+            <span class="bold">FanSee</span>2015
+        </a>
+    </h1><h2 class="subtitle">Watch A Viedo<ul class="adjectives">
+                    <li class="adjective active" data-no="1">interatively</li>
+                    <li class="adjective" data-no="2">unprecedentedly</li>
+                    <li class="adjective" data-no="3">closely</li>
+                    <li class="adjective" data-no="4"></li>
+                    <li class="adjective" data-no="5">with family</li>
+                    <li class="adjective" data-no="6">with friends</li>
+                </u></h2>
+    <h4 class="date hidden-phone">January 31st - February 7th&nbsp;&nbsp;|&nbsp;&nbsp;Columbia University&nbsp;&nbsp;|&nbsp;&nbsp;NYC</h4>
+    <h4 class="date phone-only">January 31st - February 7th</h4>
+    <h4 class="date phone-only">Columbia University&nbsp;&nbsp;|&nbsp;&nbsp;NYC</h4></div>
+<div class="header-spacer ">
+</div><div class="sub-page">
+                <div class="registration fade-out animated">
+                    <a href="/index" id="register-button" class="fade-out button white-inverse">Try it today</a>
+                </div>
+                <div class="scroll-down fade-out animated">
+                    <a class="scroll" href="#about">
+                        <p class="fade-out">Learn More</p>
+                        <p><i class="fa fa-chevron-down fade-out"></i></p>
+                    </a>
+                </div>
+            </div>
+            <div class="sub-page centered" id="about">
+                <p class="focus focus-centered fade-out">如果你想和对象一起看电影 <br class="hidden-desktop"><strong>你们又相隔很远</strong>.</p>
+                <p class="focus focus-centered fade-out">FanSee 是你的选择 <strong>一起看，同步看，互动看</strong>.</p>
+                <p class="focus focus-centered fade-out">
+                    <a class="white-inverse button" href="/index">
+                        Register Today.
+                    </a>
+                </p>
+                <div class="scroll-down animated">
+                    <a class="scroll" href="#schedule">
+                        <p class="fade-out">Get the Details</p>
+                        <p><i class="fa fade-out fa-chevron-down"></i></p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+   
+    <div id="kickoff" class="page blue with-image with-nav" data-page="10">
+        <div class="inner">
+            <div class="header white" id="">
+    <h1 class="title">
+        <a >
+            <span class="bold">What's More</span>&hellip;
+        </a>
+    </h1></div>
+<div class="header-spacer ">
+</div>
+        </div>
+        <img class="hidden-desktop" class="tablet-image" src="columbia.jpg">
+    </div>
+
+
+    <div id="contact" class="page white with-nav" data-page="11">
+        <div class="inner">
+            <div class="header blue" id="">
+    <h1 class="title">
+        <a >
+            <span class="bold">Contact</span>Us
+        </a>
+    </h1></div>
+<div class="header-spacer ">
+</div>
+            <h5>....</h5>
+            <h5>....</h5>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    $(function() {
+
+    /***********
+     * Buttons *
+     ***********/
+
+    $('a[href="#register"]').click(function(e) {
+        e.preventDefault();
+        $('nav').removeClass('open');
+        $('html, body').animate({'scrollTop': 0}, 500, function() {
+            $('#register-button')[0].click();
+        });
+    });
+
+    var $headerMeasure = $('#measure-header'),
+        mobileRespond = function() {
+            /* mobile only */
+            $('.page:first-child').css({'min-height': $(window).height() * 2});
+            $('.header.fixed').removeClass('fixed');
+        };
+
+    $('.scroll').click(function(e) {
+        e.preventDefault();
+        $('nav').removeClass('open');
+        var $dest = $($(this).attr('href')),
+            scrollTop;
+        if ($dest.data('offset') === "header") {
+            scrollTop = $dest.offset().top - $headerMeasure.outerHeight();
+        } else {
+            scrollTop = $dest.offset().top;
+        }
+        $('html, body').animate({'scrollTop': scrollTop}, 500);
+    });
+
+    $('.ham').click(function() {
+        $('nav').toggleClass('open');
+    });
+
+    $('nav').click(function(e) {
+        e.stopPropagation();
+    });
+
+    $(document).click(function() {
+        $('nav').removeClass('open');
+    })
+
+    /**************
+     * First Page *
+     **************/
+
+    setTimeout(function() {
+        $('.registration').addClass('fade-in-up');
+    }, 500);
+    setTimeout(function() {
+        $('.scroll-down').addClass('fade-in-up');
+    }, 1000);
+
+    setTimeout(setKey, 3000);
+    function setKey() {
+        var $oldWord = $('.adjective.active'),
+            $newWord = $('.adjective[data-no="' + ($oldWord.data('no') + 1) + '"]');
+        if ($newWord.length == 0) {
+            $newWord = $('.adjective[data-no="1"]');
+        }
+        $newWord.css({"opacity": 0});
+        $oldWord.stop().animate({"opacity": 0}, 200)
+        .promise().done(function() {
+            $oldWord.removeClass('active');
+            $newWord.addClass('active');
+            $newWord.stop().animate({"opacity": 1}, 200)
+            .promise().done(function() {
+                setTimeout(setKey, 3000);
+            });
+        });
+    }
+
+    /*************
+     * Scrolling *
+     *************/
+var md = new MobileDetect(window.navigator.userAgent);
+if (md.mobile() == null) {
+    $(window).scroll(function() {
+
+        /* Fadeout elements as they approach the top of the screen*/
+
+        var fadeoutPercent = function($elem) {
+            var offset = 100,
+                $navbar = $('.page[data-page="1"] .header'),
+                // How far the bottom of the element is from the top of the viewport.
+                distanceToOffscreen = $elem.offset().top + $elem.outerHeight() - $(window).scrollTop(),
+                // The total distance the element will travel while fading.
+                totalTravelDistance = $elem.height() + $navbar.outerHeight() + offset,
+                linear = Math.min(Math.max(0, distanceToOffscreen)/totalTravelDistance, 1);
+            return linear*linear
+        }
+        $.each($('.fade-out'), function(_, elem) {
+            var $elem = $(elem),
+                opacity = fadeoutPercent($elem);
+            $elem.css({'opacity': opacity});
+            // $elem.find('*').each(function(_, el) {
+            //     $(el).css({'opacity': opacity});
+            // });
+        });
+
+
+        /* Fade to blue on the first page */
+
+        var percentComplete = function(pageNo) {
+            var $page = $('.page[data-page="' + pageNo + '"]'),
+                difference = $(window).scrollTop() - $page.offset().top;
+            return Math.min(Math.max(-1 * $page.height(), difference)/$page.height(), 1);
+        };
+        var a = Math.max(0, percentComplete(1)),
+            $bluelayer = $('.page[data-page="1"] > .inner'),
+            rgba = "rgba(50,67,122," + (0.5 + a) + ")";
+        $bluelayer.css({"background-color": rgba});
+
+        var $page = $('#kickoff'),
+            start = $page.offset().top - $(window).height(),
+            total = $page.height() + $('#contact').height(),
+            diff = $(window).scrollTop() - start,
+            op = Math.min(Math.max(0,diff)/total, 1),
+            op = 0.5 + op * op / 2;
+            scale = Math.min(1, 0.5 + op/2);
+        $('.fading-logo').css({
+            'opacity': op,
+            'transform': 'scale(' + scale + ')'
+        });
+
+
+        /* Hide the hero image after the first page */
+
+        var $nav = $('nav'),
+            $firstPage = $('.page[data-page="1"]'),
+            $heroImg = $firstPage.find('.background'),
+            $shortformSidebar = $('.shortform-sidebar'),
+            bottomOfViewport = $(window).scrollTop() + $(window).outerHeight(),
+            pageToBottom = $firstPage.offset().top + $firstPage.height() - bottomOfViewport;
+
+        if (pageToBottom < 0) {
+            /* Set a header to fixed as it hits the top of the screen */
+            $heroImg.addClass('bottom');
+        } else {
+            /* Unfix the header when we start to see the page above it */
+            $heroImg.removeClass('bottom');
+        }
+
+
+        /* Show the with-image image */
+
+        $.each($('.page.with-image'), function(_, page) {
+            var $page = $(page),
+                pageNo = $page.data('page'),
+                $image = $('.background[data-page="' + pageNo + '"]'),
+                topOfViewport = $(window).scrollTop(),
+                bottomOfViewport = topOfViewport + $(window).outerHeight(),
+                pageToBottom = $page.offset().top - bottomOfViewport,
+                pageToTop = $page.offset().top + $page.height() - topOfViewport;
+
+            if (pageToBottom < 0 && pageToTop > 0) {
+                $image.removeClass('hidden');
+            } else {
+                $image.addClass('hidden');
+            }
+        });
+
+        /* Transition headers between pages */
+        $.each($('.page'), function(_, page) {
+            var $page = $(page),
+                pageNo = parseInt($page.data('page'));
+
+            if (pageNo == 1) { return; }
+
+            var $prevPage = $('.page[data-page="' + (pageNo - 1) + '"]'),
+                $header = $page.find('.header'),
+                $prevHeader = $prevPage.find('.header'),
+                topOfViewport = $(window).scrollTop();
+                headerToTop = $header.offset().top - topOfViewport;
+                pageToTop = $page.offset().top - topOfViewport;
+                topOfPrevHeader = $prevHeader.offset().top,
+                bottomOfPrevHeader = $prevHeader.offset().top + $prevHeader.outerHeight(),
+                bottomOfPrevPage = $prevPage.offset().top + $prevPage.outerHeight();
+
+            if (headerToTop < 0) {
+                /* Set a header to fixed as it hits the top of the screen */
+                $header.addClass('fixed');
+                if (pageNo == 2) {
+                    $nav.addClass('fixed');
+                    $shortformSidebar.addClass('fixed');
+                }
+            } else if (pageToTop > 0) {
+                /* Unfix the header when we start to see the page above it */
+                $header.removeClass('fixed');
+                if (pageNo == 2) {
+                    $nav.removeClass('fixed');
+                    $shortformSidebar.removeClass('fixed');
+                }
+            }
+
+            if ($prevHeader.hasClass('fixed') && !$prevHeader.hasClass('bottom') && bottomOfPrevHeader > bottomOfPrevPage) {
+                /* Unfix the previous header as the current one hits it */
+                $prevHeader.addClass('bottom');
+            } else if ($prevHeader.hasClass('bottom') && topOfPrevHeader > topOfViewport) {
+                /* Fix the previous header as we scroll it into view */
+                $prevHeader.removeClass('bottom');
+            }
+        });
+
+        /* Make sure the shortform sidebar looks good as it's leaving */
+        var shortformToTop = $shortformSidebar.offset().top,
+            $shortformInner = $('.shortform-sidebar > .inner'),
+            $shortformWrapper = $shortformSidebar.parent(),
+            shortformInnerToTop = $shortformInner.offset().top,
+            bottomOfShortformInner = shortformInnerToTop + $shortformInner.outerHeight(),
+            bottomOfShortformWrapper = $shortformWrapper.offset().top + $shortformWrapper.outerHeight(),
+            topOfViewport = $(window).scrollTop();
+
+        if ($shortformSidebar.hasClass('bottom') &&  shortformInnerToTop > topOfViewport) {
+            $shortformSidebar.removeClass('bottom');
+        } else if (bottomOfShortformInner > bottomOfShortformWrapper) {
+            $shortformSidebar.addClass('bottom');
+        }
+
+
+
+    });
+} else {
+    window.addEventListener("resize", mobileRespond, false);
+    window.addEventListener("orientationchange", mobileRespond, false);
+    mobileRespond();
+    $('.page:first-child').css({'height': $('.page:first-child').height()})
+}
+});
+
+
+    
+</script>
+</body>
+</html>
