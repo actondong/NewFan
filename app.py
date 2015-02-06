@@ -7,7 +7,10 @@ import sys
 from flask.ext.socketio import join_room, leave_room
 from flask.ext.socketio import SocketIO, emit,send
 import db
+import twilio.twiml
+
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 roomCurrTime={}
@@ -22,12 +25,15 @@ def hello():
 	else:
 		return render_template("cinema.html",myUserName='Guest')
 
-@app.route("/")
+@app.route("/",methods= ['GET','POST'])
 def home():
+
 	if 'username' in session:
     		return render_template("cinema.html",myUserName=session['username'])
 	else:
-		return render_template("homepage.html")
+            resp = twilio.twiml.Response()
+            resp.message("Hello, Mobile Monkey")
+		return str(resp) render_template("homepage.html")
 
 
 @app.route('/login',  methods=['POST', 'GET'])
