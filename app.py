@@ -1,6 +1,7 @@
 
 from flask import Flask, jsonify,render_template,request,session,redirect
 from random import randint
+from youtube import search
 import requests
 import sys
 from flask.ext.socketio import join_room, leave_room
@@ -78,6 +79,13 @@ def search():
 @socketio.on('my event', namespace='/test')
 def test_message(message):
     emit('rome', {'data': 'romeeeee'},broadcast=True)
+
+@socketio.on('URL query', namespace='/test')
+def query(message):
+    URL = message['url']
+    title = search(URL)
+    print(title)
+    emit('get video ID', {'ID': 'romeeeee'})
 
 @socketio.on('request host', namespace='/test')
 def test_message(message):

@@ -33,6 +33,9 @@
 	    		player.pauseVideo();
 	    	}
 	    });
+	    socket.on('get video ID', function(msg){
+	    	alert(msg.ID);
+	    });
 	    socket.on('test Only', function(msg){
 	    	alert(msg.data);
 	    });
@@ -244,15 +247,23 @@
 				<a href="#" onclick="toggleVideo()">Movie</a>
 			</div>
 			<div id="event-table" class="panel-body" style="padding:0px">
-				<div id="player"></div>
+				<div hidden id="player"></div>
 			</div>
 		</div>
+	</div>
+	<div>
+		<input type="text" class="form-control" id="videoURL">
+		<button onclick="fetchVideoID()">
 	</div>
 <script>
 	//roll scroll bar
 	function scrollDown(divId){
 		a = document.getElementById(divId);
 		a.scrollTop=a.scrollHeight;
+	}
+	function fetchVideoID(){
+		var URL = document.getElementById("videoURL").value;
+		socket.emit('URL query',{url: URL});
 	}
 	function sendMessage(){
 		if(document.getElementById('chat_message').value==""){
@@ -301,6 +312,12 @@
 	    opacity: 1,
 	  	}, 1000 );
 	}
+	function hideVideo(){
+		$("#player").hide();
+	}
+	function showVideo(){
+		$("#player").show(10);
+	}
 	//setInterval(function(){ alert("Hello"); }, 3000);/
 	var transp = 0;
 	var flag=true;
@@ -319,6 +336,7 @@
 	},100);
 	var width = document.getElementById("player").offsetWidth;
 	document.getElementById("player").style.height=width*0.6+"px";
+	hideVideo();
 	hideAll();
 	showAll();
 </script>
