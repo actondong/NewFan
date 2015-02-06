@@ -143,10 +143,9 @@ $('#signupform').submit(function(evt) {
 			contentType: 'application/json;charset=UTF-8',
 			success : function(result) {
 				document.getElementById("hahahasignup").disabled = false;
-				if(result.success==true){
+				if(result.success==true)
 					$('#signupsuccess').show();
 					location.reload();
-				}
 				else{
 					$('#inputEmail')
   						.transition('shake')

@@ -128,7 +128,7 @@
         	stop = true;
     	}
         videoChange(currTime, stop);*/
-        if(currentTime()-preTime<1000){
+        if(currentTime()-preTime<50){
         	return;
         }
         currTime = player.getCurrentTime();
@@ -369,10 +369,9 @@
 	  	}, 1000 );
 	}
 	function showMovie(){
-		$("#video-window").animate({
-	    width: "75%",
-	    opacity: 1,
-	  	}, 1000 );
+		$('#video-window')
+  .transition('slide down')
+;
 	}
 	function hideVideo(){
 		$("#player").hide();
