@@ -9,8 +9,18 @@
 	  	var socket = io.connect('http://127.0.0.1:8080'+namespace);
 	  	var identifier = Math.random();
 	  	var host = false;
+	  	var currVideo = null;
+	  	var preTime = currentTime;
 	  	socket.on('connect', function() {
 	        //socket.emit('my event', {data: 'I\'m connected!'});
+	    });
+	    socket.on('wait for video ID',function(msg){
+	    	var vid = msg.currVideo;
+	    	//alert(vid);
+	    	if(vid!=currVideo){
+	    		showMovie();
+	    		switchVideo(vid,msg.startTime);
+	    	}
 	    });
 	    socket.on('host confirm', function(msg){
 	    	var roomNumber = document.getElementById("room_number");
@@ -31,18 +41,24 @@
 	    socket.on('pause for new', function(){
 	    	if(host){
 	    		player.pauseVideo();
+	    		roomNumber = document.getElementById("room_number").value;
+	    		socket.emit('broadcast ID',{ID:currVideo,startTime:player.getCurrentTime(),room:roomNumber});
 	    	}
 	    });
 	    socket.on('get video ID', function(msg){
 	    	//showVideo();
 	    	if(msg.ID!=null){
+	    		showMovie();
 	    		switchVideo(msg.ID);
+	    		document.getElementById('selectVideo').src="{{url_for('static', filename='background/select2.jpeg')}}";
+	    		document.getElementById('playListModalLabel').innerHTML="Fantastic! Excellent! A right URL!";
 	    	}else{
-	    		alert("!");
+	    		document.getElementById('selectVideo').src="{{url_for('static', filename='background/select3.jpeg')}}";
+	    		document.getElementById('playListModalLabel').innerHTML="What? Is it A Right URL?";
 	    	}
+	    	document.getElementById('videoURL').value="";
 	    });
 	    socket.on('test Only', function(msg){
-	    	alert(msg.data);
 	    });
 	    socket.on('chat message receive', function(msg){
 	    	appendChat(msg.data);
@@ -51,14 +67,15 @@
 	    	if(msg.identifier!=identifier){
 	    		currTime = player.getCurrentTime();
 	    		targetTime = msg.currTime;
-	    		if(Math.abs(currTime-targetTime)>0.3){
-	    			player.seekTo(targetTime+0.2);
+	    		if(Math.abs(currTime-targetTime)>0.5){
+	    			player.seekTo(targetTime);
 	    		}
 	    		if(msg.stop==true){
 	    			player.pauseVideo();
 	    		}else{
 	    			player.playVideo();
 	    		}
+	    		preTime=currentTime();
 	    	}
 	    });
   /////////// easy to hash
@@ -111,6 +128,9 @@
         	stop = true;
     	}
         videoChange(currTime, stop);*/
+        if(currentTime()-preTime<50){
+        	return;
+        }
         currTime = player.getCurrentTime();
         if(event.data == 2){
         	player.pauseVideo();
@@ -133,11 +153,13 @@
 		socket.emit('request host',{data: 'whatever'});
 		$('#hostConfirm').show(600);
 		$('#hostButton').hide();
+		$('#hostModal').hide();
 		//hostConfirm
 	}
 	function requestJoin(){
 		number = document.getElementById("room_number").value;
 		socket.emit('request join',{data: number});
+		$('#joinModal').hide();
 	}
 	function requestInvite(){
 		room_number = document.getElementById("room_number").value;
@@ -158,7 +180,6 @@
 		}
 	}
 	function test(event){
-		alert("!");
 	}
 </script>
 
@@ -194,7 +215,7 @@
       		<div style="text-align: center;padding: 0px 0px 10px 0px">
       			<img src="{{url_for('static', filename='background/join.jpeg')}}"/>
       		</div>
-			<input type="text" class="form-control" id="room_number">
+			<input type="text" class="form-control" id="room_number" autofocus>
 			<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">confirm</button>
       </div>
     </div>
@@ -202,19 +223,20 @@
 </div>
 <!-- play list-->
 <div class="modal fade" id="playListModal" tabindex="-1" role="dialog" aria-labelledby="playListModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="playListModalLabel" style="text-align: center">I Wanna Watch ... What?</h4>
       </div>
       <div class="modal-body">
-      		<div>
-				<input type="text" class="form-control" id="videoURL">
-				<button class="btn btn-primary" onclick="fetchVideoID()">
+      		<div style="text-align: center;padding: 0px 0px 10px 0px">
+      			<img id="selectVideo" src="{{url_for('static', filename='background/select1.jpeg')}}"/>
+      		</div>
+			<input type="text" class="form-control" placeholder="URL from Youtube" id="videoURL" autofocus>
+			<button class="btn btn-primary" onclick="fetchVideoID()" style="width:100%">
 				Watch
-				</button>
-			</div>
+			</button>
       </div>
     </div>
   </div>
@@ -242,8 +264,8 @@
 							<h1 style="margin:0;text-align: center"><span id="roomNumberLabel" class="label label-info"></span></h1>
 						</div>
 						<div class=" col-sm-12 col-md-12" style="margin: 10px 0px 0px 0px">
-							<button id="playListButton" type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#playListModal" style="width:100%">
-							  PlayList
+							<button id="playListButton" type="button" class="btn btn-warning btn-lg" data-toggle="modal" onclick="resetHusky()" data-target="#playListModal" style="width:100%">
+							  Select Video
 							</button>
 						</div>
 					</div>
@@ -284,6 +306,10 @@
 	function scrollDown(divId){
 		a = document.getElementById(divId);
 		a.scrollTop=a.scrollHeight;
+	}
+	function resetHusky(){
+		document.getElementById('selectVideo').src="{{url_for('static', filename='background/select1.jpeg')}}";
+	   	document.getElementById('playListModalLabel').innerHTML="I Wanna Watch ... What?";
 	}
 	function fetchVideoID(){
 		room_number = document.getElementById("room_number").value;
@@ -331,6 +357,12 @@
 	    opacity: 1,
 	  	}, 1000 );
 	}
+	function showInfoWindow(){
+		$("#room-info-window").animate({
+	    width: "25%",
+	    opacity: 1,
+	  	}, 1000 );
+	}
 	function showMovie(){
 		$("#video-window").animate({
 	    width: "75%",
@@ -343,9 +375,10 @@
 	function showVideo(){
 		$("#player").show(10);
 	}
-	function switchVideo(id){
-		player.loadVideoById(id, 5, "large");
-		player.playVideo();
+	function switchVideo(id,startTime){
+		currVideo=id;
+		player.loadVideoById(id, startTime);
+		player.pauseVideo();
 	}
 	//setInterval(function(){ alert("Hello"); }, 3000);/
 	var transp = 0;
@@ -365,9 +398,9 @@
 	},100);
 	var width = document.getElementById("player").offsetWidth;
 	document.getElementById("player").style.height=width*0.6+"px";
-	//hideVideo();
 	hideAll();
-	showAll();
+	showInfoWindow();
+	//showAll();
 	//switchVideo();
 </script>
 {% endblock %}

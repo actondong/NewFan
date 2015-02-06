@@ -98,7 +98,6 @@ def test_message(message):
     room = str(randint(1,1000))
     emit('host confirm', {'data':room})
     join_room(room)
-    print('request host')
 
 @socketio.on('request join', namespace='/test')
 def test_message(message):
@@ -106,7 +105,13 @@ def test_message(message):
     join_room(room)
     emit('join confirm', {'data': room})
     emit('pause for new',{'data': 'pause'},room=room)
-    print('request join')
+
+@socketio.on('broadcast ID', namespace='/test')
+def broadcastID(message):
+    room = message['room']
+    currVideo = message['ID']
+    startTime = message['startTime']
+    emit('wait for video ID',{'currVideo': currVideo,"startTime":startTime},room=room)
 
 @socketio.on('video status change', namespace='/test')
 def video_change(message):
@@ -115,14 +120,12 @@ def video_change(message):
     roomCurrTime[room]=currTime
     stop = message['stop']
     currTime = message['currTime']
-    print(message['identifier']);
     emit('change video', {'stop': stop,'currTime': currTime, 'identifier': message['identifier']}, room=room)
 
 @socketio.on('room chat', namespace='/test')
 def room_chat(message):
     room = message['room']
     data = message['data']
-    print(room)
     emit('test Only', {'data': 'sds'}, room=room)
 
 @socketio.on('chat broadcast', namespace='/test')
@@ -138,16 +141,6 @@ def test_message(message):
 @socketio.on('connect', namespace='/test')
 def test_connect():
     emit('my response', {'data': 'Connected'})
-    print('Client Connected')
-@socketio.on('disconnect', namespace='/test')
-def test_disconnect():
-    print('disconnect') 
-
-@socketio.on('my room event',namespace='/test')
-def on_join(data):
-    room = data['room']
-    msg=data['data']
-    emit('my response',{'data':msg}, room=room)
 
 
 @socketio.on('join',namespace='/test')
