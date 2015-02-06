@@ -3,7 +3,7 @@ from flask import url_for
 from pymongo import MongoClient
 from flask import Flask
 
-client = MongoClient('mongodb://ec2-54-164-210-137.compute-1.amazonaws.com:27017/')
+client = MongoClient('mongodb://ec2-52-0-171-169.compute-1.amazonaws.com:27017/')
 db = client['test_database']
 collection = db['test-collection']
 
