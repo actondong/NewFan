@@ -196,6 +196,7 @@
       			<img src="{{url_for('static', filename='background/host.jpeg')}}"/>
       		</div>
       		<button id="hostButton" class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
+
       		<div hidden id="hostConfirm">
       			<h4 id="newGeneratedNumber" style="text-align: center">My Room Number: </h4>
       		</div>
@@ -251,12 +252,12 @@
 					<div class=" col-sm-12 col-md-12">
 						<div class=" col-sm-6 col-md-6">
 							<!-- join button -->
-							<button id="outsideHostButton" type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#hostModal" style="width:100%">
+							<button id="outsideHostButton" type="button" class="button btn btn-success btn-lg" data-toggle="modal" data-content="I wanna open a room!" data-target="#hostModal" style="width:100%">
 							  Host
 							</button>
 						</div>
 						<div class=" col-sm-6 col-md-6">
-							<button id="outsideJoinButton" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinModal" style="width:100%">
+							<button id="outsideJoinButton" type="button" class="btn btn-primary btn-lg button" data-toggle="modal" data-content="I wanna go to my friend's room!" data-target="#joinModal" style="width:100%">
 							  Join
 							</button>
 						</div>
@@ -265,7 +266,7 @@
 						</div>
 						<div class=" col-sm-12 col-md-12" style="margin: 10px 0px 0px 0px">
 							<button id="playListButton" type="button" class="btn btn-warning btn-lg" data-toggle="modal" onclick="resetHusky()" data-target="#playListModal" style="width:100%">
-							  Select Video
+							Choose A Video
 							</button>
 						</div>
 					</div>
@@ -402,5 +403,10 @@
 	showInfoWindow();
 	//showAll();
 	//switchVideo();
+
+$('.button').popup({
+    on: 'hover',
+    closable: false
+});
 </script>
 {% endblock %}
