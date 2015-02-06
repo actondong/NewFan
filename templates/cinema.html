@@ -34,7 +34,12 @@
 	    	}
 	    });
 	    socket.on('get video ID', function(msg){
-	    	alert(msg.ID);
+	    	//showVideo();
+	    	if(msg.ID!=null){
+	    		switchVideo(msg.ID);
+	    	}else{
+	    		alert("!");
+	    	}
 	    });
 	    socket.on('test Only', function(msg){
 	    	alert(msg.data);
@@ -80,20 +85,19 @@
       //    after the API code downloads.
       var player;
       function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
+       	player = new YT.Player('player', {
           height: '100%',
           width: '100%',
-          videoId: 'M7lc1UVf-VE',
+          videoId: 'o-WVnKSjwuY',
           events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
           }
-        });
+        }); 
       }
-
       // 4. The API will call this function when the video player is ready.
       function onPlayerReady(event) {
-        event.target.playVideo();
+        //event.target.playVideo();
       }
       // 5. The API calls this function when the player's state changes.
       //    The function indicates that when playing a video (state=1),
@@ -196,6 +200,25 @@
     </div>
   </div>
 </div>
+<!-- play list-->
+<div class="modal fade" id="playListModal" tabindex="-1" role="dialog" aria-labelledby="playListModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="playListModalLabel" style="text-align: center">I Wanna Watch ... What?</h4>
+      </div>
+      <div class="modal-body">
+      		<div>
+				<input type="text" class="form-control" id="videoURL">
+				<button class="btn btn-primary" onclick="fetchVideoID()">
+				Watch
+				</button>
+			</div>
+      </div>
+    </div>
+  </div>
+</div>
 	<div id="room-info-window" class="col-sm-3 col-md-3" style="padding:5px">
 		<div id="RoomInformation" class="panel panel-default allTransparent">
 			<div class="panel-heading">
@@ -217,6 +240,11 @@
 						</div>
 						<div hidden id="roomInfo" class="col-sm-12 col-md-12">
 							<h1 style="margin:0;text-align: center"><span id="roomNumberLabel" class="label label-info"></span></h1>
+						</div>
+						<div class=" col-sm-12 col-md-12" style="margin: 10px 0px 0px 0px">
+							<button id="playListButton" type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#playListModal" style="width:100%">
+							  PlayList
+							</button>
 						</div>
 					</div>
 				</div>
@@ -247,13 +275,9 @@
 				<a href="#" onclick="toggleVideo()">Movie</a>
 			</div>
 			<div id="event-table" class="panel-body" style="padding:0px">
-				<div hidden id="player"></div>
+				<div id="player"></div>
 			</div>
 		</div>
-	</div>
-	<div>
-		<input type="text" class="form-control" id="videoURL">
-		<button onclick="fetchVideoID()">
 	</div>
 <script>
 	//roll scroll bar
@@ -318,6 +342,10 @@
 	function showVideo(){
 		$("#player").show(10);
 	}
+	function switchVideo(id){
+		player.loadVideoById(id, 5, "large");
+		player.playVideo();
+	}
 	//setInterval(function(){ alert("Hello"); }, 3000);/
 	var transp = 0;
 	var flag=true;
@@ -336,8 +364,9 @@
 	},100);
 	var width = document.getElementById("player").offsetWidth;
 	document.getElementById("player").style.height=width*0.6+"px";
-	hideVideo();
+	//hideVideo();
 	hideAll();
 	showAll();
+	//switchVideo();
 </script>
 {% endblock %}
