@@ -82,10 +82,14 @@ def test_message(message):
 
 @socketio.on('URL query', namespace='/test')
 def query(message):
+    room=message['room']
     URL = message['url']
     item = searchID(URL)
     if item:
-        emit('get video ID', {'ID': item["id"],'title':item["snippet"]["title"]})
+        if room:
+            emit('get video ID', {'ID': item["id"],'title':item["snippet"]["title"]},room=room)
+        else:
+            emit('get video ID', {'ID': item["id"],'title':item["snippet"]["title"]})
     else:
         emit('get video ID', {'ID': item,'title':item})
 

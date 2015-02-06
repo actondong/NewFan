@@ -286,8 +286,9 @@
 		a.scrollTop=a.scrollHeight;
 	}
 	function fetchVideoID(){
+		room_number = document.getElementById("room_number").value;
 		var URL = document.getElementById("videoURL").value;
-		socket.emit('URL query',{url: URL});
+		socket.emit('URL query',{url: URL,room:room_number});
 	}
 	function sendMessage(){
 		if(document.getElementById('chat_message').value==""){
