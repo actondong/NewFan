@@ -33,7 +33,7 @@ def home():
 	else:
             resp = twilio.twiml.Response()
             resp.message("Hello, Mobile Monkey")
-		return str(resp) render_template("homepage.html")
+	    return render_template("homepage.html")
 
 
 @app.route('/login',  methods=['POST', 'GET'])

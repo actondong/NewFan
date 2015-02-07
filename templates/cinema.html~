@@ -128,7 +128,7 @@
         	stop = true;
     	}
         videoChange(currTime, stop);*/
-        if(currentTime()-preTime<50){
+        if(currentTime()-preTime<1000){
         	return;
         }
         currTime = player.getCurrentTime();
@@ -276,7 +276,7 @@
 			</div>
 		</div>
 		<div id="ChatRoom" class="panel panel-default allTransparent">
-			<div class="panel-heading">
+			<div class="panel-heading" style="height:300px">
 				<h3 class="ui header">
   Chat
 </h3>
@@ -369,9 +369,10 @@
 	  	}, 1000 );
 	}
 	function showMovie(){
-		$('#video-window')
-  .transition('slide down')
-;
+		$("#video-window").animate({
+	    width: "75%",
+	    opacity: 1,
+	  	}, 1000 );
 	}
 	function hideVideo(){
 		$("#player").hide();
