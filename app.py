@@ -32,7 +32,7 @@ def hello():
 def confirm(info):
     phoneNumber,room = info.split('+')
     socketio.emit('commit join', {'username': phoneNumber,'room':room}, namespace='/test')
-    return phoneNumber
+    return "You have successfully joined room "+ room
 
 @app.route("/")
 def home():
@@ -101,7 +101,7 @@ def invitation(message):
     twilioID = 'AC336052c209d59ff6da54f40127b309c0'
     token = '403e4ce7e10d41559201cfdb973997f3'
     client = TwilioRestClient(twilioID,token)
-    message = client.messages.create(body="http://"+targetUrl+"/confirmInvitation/"+number+"+"+room,
+    message = client.messages.create(body="click on the following link to join the room:\nhttp://"+targetUrl+"/confirmInvitation/"+number+"+"+room,
     to="+1"+number,
     from_="+18628998914")
     print message.sid
