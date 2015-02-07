@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 roomCurrTime={}
-targetUrl = '160.39.236.225:8080'
+targetUrl = 'http://ec2-52-0-171-169.compute-1.amazonaws.com:8080'
 @app.errorhandler(404)
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404

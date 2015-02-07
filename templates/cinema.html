@@ -6,8 +6,9 @@
 			return date.getTime();
 		}
 		var userName ='{{myUserName}}';
+		var phoneNumber = '{{myPhoneNumber}}';
 		var namespace = '/test';
-	  	var socket = io.connect('http://localhost:8080'+namespace);
+	  	var socket = io.connect('http://ec2-52-0-171-169.compute-1.amazonaws.com:8080'+namespace);
 	  	var identifier = Math.random();
 	  	var host = false;
 	  	var currVideo = null;
@@ -16,7 +17,8 @@
 	        //socket.emit('my event', {data: 'I\'m connected!'});
 	    });
 	    socket.on('commit join',function(msg){
-	    	if(userName==msg.username){
+	    	alert(userName);
+	    	if(myPhoneNumber==msg.username){
 	    		document.getElementById("room_number").value=msg.room;
 	    		socket.emit('request join',{data: msg.room});
 	    	}
