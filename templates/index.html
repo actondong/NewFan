@@ -8,6 +8,31 @@
 <link href="{{url_for('static', filename='css/semantic.css')}}" rel="stylesheet">
 <link href="{{url_for('static', filename='css/background.css')}}" rel="stylesheet">
 <link href="{{url_for('static', filename='css/back2.css')}}" rel="stylesheet">
+<link async href="http://fonts.googleapis.com/css?family=Monoton" data-generated="http://enjoycss.com" rel="stylesheet" type="text/css"/>
+<style>
+		.night-hotel {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  padding: -1px;
+  border: none;
+  font: normal 30px/1 "Monoton", Helvetica, sans-serif;
+  color: rgba(255,255,255,1);
+  text-align: center;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 10px rgb(255,255,255) , 0 0 20px rgb(255,255,255) , 0 0 30px rgb(255,255,255) , 0 0 40px rgb(255,17,119) , 0 0 70px rgb(255,17,119) , 0 0 80px rgb(255,17,119) , 0 0 100px rgb(255,17,119) , 0 0 150px rgb(255,17,119) ;
+  -webkit-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+  -moz-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+  -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+  transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+}
+
+.night-hotel:hover {
+  text-shadow: 0 0 5px rgb(255,255,255) , 0 0 10px rgb(255,255,255) , 0 0 15px rgb(255,255,255) , 0 0 20px rgb(255,17,119) , 0 0 35px rgb(255,17,119) , 0 0 40px rgb(255,17,119) , 0 0 50px rgb(255,17,119) , 0 0 75px rgb(255,17,119) ;
+}
+		
+		</style>
 <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='js/moment.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='js/semantic.js')}}"></script>
@@ -42,7 +67,7 @@
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
 
-			<a class="navbar-brand" href="/"><font size="6">FunSee</font></a>
+			<a class="navbar-brand" href="/"><div class="night-hotel">FanSee</div></a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -60,14 +85,14 @@
 						placeholder="Password">
 				</div>
 				<div class="form-group">
-					<button class="btn btn-primary" onclick="signin()" id="signin">SignIn</button>
+					<button class="ui teal button" onclick="signin()" id="signin">SignIn</button>
 				</div>
 				<div class="form-group">
-					<button class="btn btn-primary" id="signup" data-toggle="modal" data-target="#signupmodel">SignUp</button>
+					<button class="ui yellow button" id="signup" data-toggle="modal" data-target="#signupmodel">SignUp</button>
 				</div>
 
  				{% else %}
-				<div class="form-group"><a href="#">Hi, {{myUserName}}</a></div>
+				<div class="form-group"><div class="ui inverted basic active button"><i class="user icon"></i>Hi, {{myUserName}}</div></div>
 				<div class="form-group"><form action='logout' method=post>
 				    
 				      <input type=submit value=Logout class="btn btn-danger">
