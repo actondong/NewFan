@@ -288,7 +288,7 @@
 					</div>
 				</div>
 				<div class=" col-sm-9 col-md-9 " style="padding:0px 0px">
-					<input type="text" class="form-control" id="chat_message" onkeydown="pressToSend(event)">
+					<input type="text" class="form-control" id="chat_message" placeholder="Chat with your friend!" onkeydown="pressToSend(event)">
 				</div>
 				<div class=" col-sm-2 col-md-2 " style="padding:0 0 0 5%">
 					<button class="btn btn-primary" onclick="sendMessage()">Send</button>
@@ -299,7 +299,9 @@
 	<div id="video-window" class="col-sm-9 col-md-9" style="padding:5px;height:100%">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<a href="#" onclick="toggleVideo()">Movie</a>
+				<h3 class="ui header">
+  Movie
+</h3>
 			</div>
 			<div id="event-table" class="panel-body" style="padding:0px">
 				<div id="player"></div>
