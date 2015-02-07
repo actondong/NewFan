@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 roomCurrTime={}
-targetUrl = '160.39.236.225:8080'
+targetUrl = 'ec2-52-0-171-169.compute-1.amazonaws.com:8080'
 @app.errorhandler(404)
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404
@@ -24,9 +24,9 @@ def page_not_found(error):
 def hello():
 	if 'username' in session:
 		name=db.get_user_name(session['username'])
-    		return render_template("cinema.html",myUserName=name)
+    		return render_template("cinema.html",myUserName=name,myPhoneNumber=session['username'])
 	else:
-		return render_template("cinema.html",myUserName='Guest')
+		return render_template("cinema.html",myUserName='Guest',myPhoneNumber='11111')
 
 @app.route('/confirmInvitation/<info>',  methods=['POST', 'GET'])
 def confirm(info):
@@ -39,7 +39,7 @@ def home():
 
 	if 'username' in session:
 		name=db.get_user_name(session['username'])
-    		return render_template("cinema.html",myUserName=name)
+    		return render_template("cinema.html",myUserName=name,myPhoneNumber=session['username'])
 	else:
             resp = twilio.twiml.Response()
             resp.message("Hello, Mobile Monkey")
@@ -159,6 +159,12 @@ def room_chat(message):
     room = message['room']
     data = message['data']
     emit('chat message receive', {'data': data}, room=room)
+
+@socketio.on('chat broadcast flying', namespace='/test')
+def room_chat(message):
+    room = message['room']
+    data = message['data']
+    emit('flying message receive', {'data': data}, room=room)
 
 @socketio.on('my broadcast event', namespace='/test')
 def test_message(message):
