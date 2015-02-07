@@ -157,6 +157,12 @@ def room_chat(message):
     data = message['data']
     emit('chat message receive', {'data': data}, room=room)
 
+@socketio.on('chat broadcast flying', namespace='/test')
+def room_chat(message):
+    room = message['room']
+    data = message['data']
+    emit('flying message receive', {'data': data}, room=room)
+
 @socketio.on('my broadcast event', namespace='/test')
 def test_message(message):
     emit('my response', {'data': message['data']}, broadcast=True)

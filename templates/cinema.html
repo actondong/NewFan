@@ -70,6 +70,10 @@
 	    socket.on('chat message receive', function(msg){
 	    	appendChat(msg.data);
 	    });
+	    socket.on('flying message receive', function(msg){
+	    	appendChat(msg.data);
+	    	moveLeftToRight(msg.data);
+	    });
 	    socket.on('change video', function(msg){
 	    	if(msg.identifier!=identifier){
 	    		currTime = player.getCurrentTime();
@@ -101,11 +105,9 @@
 
       // 2. This code loads the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
-
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
       // 3. This function creates an <iframe> (and YouTube player)
       //    after the API code downloads.
       var player;
@@ -185,6 +187,11 @@
 	function pressToSend(event){
 		if(event.keyCode==13){
 			sendMessage();
+		}
+	}
+	function pressToSendText(event){
+		if(event.keyCode==13){
+			sendFlyingText();
 		}
 	}
 	function test(event){
@@ -292,7 +299,7 @@
 </div>
 	<div id="room-info-window" class="col-sm-3 col-md-3" style="padding:5px">
 		<div id="RoomInformation" class="panel panel-default allTransparent">
-			<div class="panel-heading">
+			<div id="roomHead" class="panel-heading">
 				<h3 class="ui header">
   Rooms
 </h3>
@@ -340,22 +347,31 @@
 						<div id="chatresponse" class="ui comments"></div>
 					</div>
 				</div>
-				<div class=" col-sm-9 col-md-9 " style="padding:0px 0px">
+				<div class=" col-sm-8 col-md-8 " style="padding:0px 0px">
 					<input type="text" class="form-control" id="chat_message" placeholder="Chat with your friend!" onkeydown="pressToSend(event)">
 				</div>
-				<div class=" col-sm-2 col-md-2 " style="padding:0 0 0 5%">
-					<button class="btn btn-primary" onclick="sendMessage()">Send</button>
+				<div class=" col-sm-4 col-md-4 " style="padding:0px 0px">
+					<button class="btn btn-primary" style="width:100%" onclick="sendMessage()">Send</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div id="video-window" class="col-sm-9 col-md-9" style="padding:5px;height:100%">
 		<div class="panel panel-default">
-			<div class="panel-heading">
+			<div id="videoHead" class="panel-heading">
 				<h3 id="alertInfo" class="ui header">Movie</h3>
 			</div>
 			<div id="event-table" class="panel-body" style="padding:0px">
 				<div id="player"></div>
+				<div id="underDiv">
+					<div id="headHeight" class="col-sm-3 col-md-3" style="padding:2px" >
+					<button id="fullScreen" inline class="btn btn-primary" style="width:100%" onclick="fullMode()"> Click Me For Full Screen </button>
+					<button hidden id="exitFullScreen" inline class="btn btn-primary" style="width:100%" onclick="exitFullMode()"> Click Me To Exit </button>
+					</div>
+					<div class="col-sm-9 col-md-9" style="padding:2px">
+					<input type="text" class="form-control" id="flyingText" placeholder="Chat with your friend!" onkeydown="pressToSendText(event)">
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -371,6 +387,60 @@
 <script>
 	//roll scroll bar
 	var usernameorphonenumber='{{myUserName}}';
+	function moveLeftToRight(s){
+		var speed =10000+Math.floor(Math.random()*10000);
+		var top = 50+Math.floor(Math.random()*300);
+		var size = 25+Math.floor(Math.random()*20);
+		var i=Math.floor(Math.random()*10000);
+		var a = document.createElement('h');
+		a.innerHTML=s;
+		a.id=i;
+		a.style.position="absolute";
+		a.style.left='0px';
+		a.style.top=top+'px';
+		a.style.color=get_random_color();
+		a.style.fontSize=size+'px';
+		document.body.appendChild(a);
+		$( "#"+i ).animate({
+		    left: "+=2000",
+		  }, speed, function() {
+		    var tar = document.getElementById(i);
+			tar.parentNode.removeChild(tar);
+		});
+	}
+	function get_random_color() 
+	{
+	    var color = "";
+	    for(var i = 0; i < 3; i++) {
+	    	var sub = Math.floor(Math.random() * 256).toString(16);
+	    	color += (sub.length == 1 ? "0" + sub : sub);
+	    }
+	    return "#" + color;
+	}
+	function fullMode(){
+		$("#fullScreen").hide();
+		$("#exitFullScreen").show();
+		$("#entireNav").hide();
+		$("#room-info-window").hide();
+		$("#videoHead").hide();
+	  	$("#video-window").animate({
+	    width: "100%",
+	    height: "100%",
+	    opacity: 1,
+	  	}, 0 );
+	  	setFullHeight();
+	}
+	function exitFullMode(){
+		$("#fullScreen").show();
+		$("#exitFullScreen").hide();
+		$("#entireNav").show();
+		$("#video-window").animate({
+	    width: "75%",
+	    opacity: 1,
+	  	}, 0 );
+		$("#room-info-window").show();
+		setNormalHeight();
+	}
 	function scrollDown(divId){
 		a = document.getElementById(divId);
 		a.scrollTop=a.scrollHeight;
@@ -392,6 +462,15 @@
 		room_number = document.getElementById("room_number").value;
 		socket.emit('chat broadcast',{data: text,room: room_number});
 		document.getElementById('chat_message').value="";
+	}
+	function sendFlyingText(){
+		if(document.getElementById('flyingText').value==""){
+			return;
+		}
+		text = '{{myUserName}}'+': '+document.getElementById('flyingText').value;
+		room_number = document.getElementById("room_number").value;
+		socket.emit('chat broadcast flying',{data: text,room: room_number});
+		document.getElementById('flyingText').value="";
 	}
 	function appendChat(msg){
 		$chatWindow = $('#chatresponse');
@@ -465,6 +544,19 @@
 		var phonenumber = document.getElementById('phoneNumber').value;
 		socket.emit('waiting for invitation',{room:room,number:phonenumber});
 	}
+	function setFullHeight(){
+		start = document.getElementById("player").offsetTop;
+		windowHeight = $(window).height();
+		headHeight = $("#headHeight").height();
+		//alert(headHeight);
+		document.getElementById("player").style.height=windowHeight-headHeight-3*start+"px";
+	}
+	function setNormalHeight(){
+		headHeight = $("#headHeight").height();
+		windowHeight = $(window).height();
+		finalHeight = windowHeight-3*headHeight;
+		document.getElementById("player").style.height=finalHeight+"px";
+	}
 	//setInterval(function(){ alert("Hello"); }, 3000);/
 	var transp = 0;
 	var flag=true;
@@ -482,8 +574,8 @@
 		document.getElementById("ChatRoom").style.backgroundColor=color;
 	},100);
 	var width = document.getElementById("player").offsetWidth;
-	document.getElementById("player").style.height=width*0.6+"px";
-	hideAll();
+	document.getElementById("player").style.height=width*0.61+"px";
+	//hideAll();
 	showInfoWindow();
 	//showAll();
 	//switchVideo();
