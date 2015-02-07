@@ -564,7 +564,7 @@
 	function setChatRoomSize(){
 		headHeight = $("#headHeight").height();
 		windowHeight = $(window).height();
-		start = windowHeight-document.getElementById("scrollable").offsetTop;
+		start = document.getElementById("scrollable").offsetTop;
 		document.getElementById("scrollable").style.height=windowHeight-start-3*headHeight+"px";
 	}
 	//setInterval(function(){ alert("Hello"); }, 3000);/
