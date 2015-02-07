@@ -42,7 +42,7 @@
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
 
-			<a class="navbar-brand" href="/"><font size="8">FunSee</font></a>
+			<a class="navbar-brand" href="/"><font size="6">FunSee</font></a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -67,11 +67,13 @@
 				</div>
 
  				{% else %}
-				<form action='logout' method=post>
+				<div class="form-group"><a href="#">Hi, {{myUserName}}</a></div>
+				<div class="form-group"><form action='logout' method=post>
 				    
 				      <input type=submit value=Logout class="btn btn-danger">
 				    
 				  </form>
+</div>
   				{% endif %}
 			</div>
 		</div>
@@ -111,7 +113,7 @@
   <div class="header">
     Your user registration was successful.
   </div>
-  <p>You may now log-in with the username you have chosen</p>
+  <p>You may return to log-in page in 5 second.</p>
 </div>
       </div>
     </div>
@@ -135,7 +137,7 @@ $('#signupform').submit(function(evt) {
 				document.getElementById("hahahasignup").disabled = false;
 				if(result.success==true){
 					$('#signupsuccess').show();
-					location.reload();
+					setTimeout(function(){ location.reload();; }, 5000);
 				}
 				else{
 					$('#inputEmail')
@@ -150,7 +152,7 @@ $('#signupform').submit(function(evt) {
 		
 	});
 function validateEmail(email) {
-		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		var re = /^[0-9]\d{9}/;
 		return re.test(email);
 	}
 function signin() {
