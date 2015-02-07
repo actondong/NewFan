@@ -18,7 +18,7 @@
 	    });
 	    socket.on('commit join',function(msg){
 	    	alert(userName);
-	    	if(myPhoneNumber==msg.username){
+	    	if(phoneNumber==msg.username){
 	    		document.getElementById("room_number").value=msg.room;
 	    		socket.emit('request join',{data: msg.room});
 	    	}
