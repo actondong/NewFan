@@ -5,9 +5,8 @@
 			date = new Date();
 			return date.getTime();
 		}
-		var userName ='{{myUserName}}';
 		var namespace = '/test';
-	  	var socket = io.connect('http://160.39.236.225:8080'+namespace);
+	  	var socket = io.connect('http://127.0.0.1:8080'+namespace);
 	  	var identifier = Math.random();
 	  	var host = false;
 	  	var currVideo = null;
@@ -15,16 +14,10 @@
 	  	socket.on('connect', function() {
 	        //socket.emit('my event', {data: 'I\'m connected!'});
 	    });
-	    socket.on('commit join',function(msg){
-	    	if(userName==msg.username){
-	    		document.getElementById("room_number").value=msg.room;
-	    		socket.emit('request join',{data: msg.room});
-	    	}
-	    });
 	    socket.on('wait for video ID',function(msg){
 	    	var vid = msg.currVideo;
-	    	if(vid!=null&&vid!=currVideo){
-	    		currVideo=vid;
+	    	//alert(vid);
+	    	if(vid!=currVideo){
 	    		showMovie();
 	    		switchVideo(vid,msg.startTime);
 	    	}
@@ -46,11 +39,11 @@
 	    	hideActionButton();
 	    });
 	    socket.on('pause for new', function(){
-	    	//if(host){
+	    	if(host){
 	    		player.pauseVideo();
 	    		roomNumber = document.getElementById("room_number").value;
 	    		socket.emit('broadcast ID',{ID:currVideo,startTime:player.getCurrentTime(),room:roomNumber});
-	    	//}
+	    	}
 	    });
 	    socket.on('get video ID', function(msg){
 	    	//showVideo();
@@ -83,7 +76,6 @@
 	    			player.playVideo();
 	    		}
 	    		preTime=currentTime();
-	    		setDragInfo();
 	    	}
 	    });
   /////////// easy to hash
@@ -190,27 +182,6 @@
 	function test(event){
 	}
 </script>
-<!-- your friend is dragging-->
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="hostModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="hostModalLabel" style="text-align: center">I'm The Host!</h4>
-      </div>
-      <div class="modal-body">
-      		<div style="text-align: center;padding: 0px 0px 10px 0px">
-      			<img src="{{url_for('static', filename='background/host.jpeg')}}"/>
-      		</div>
-      		<button id="hostButton" class="btn btn-success" onclick="requestHost()" style="width:100%">Host</button>
-
-      		<div hidden id="hostConfirm">
-      			<h4 id="newGeneratedNumber" style="text-align: center">My Room Number: </h4>
-      		</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ask for host -->
 <div class="modal fade" id="hostModal" tabindex="-1" role="dialog" aria-labelledby="hostModalLabel" aria-hidden="true">
@@ -247,25 +218,6 @@
       		</div>
 			<input type="text" class="form-control" id="room_number" autofocus>
 			<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">confirm</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- ask for invite -->
-<div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="inviteModalLabel" style="text-align:center">Invite My Friend!</h4>
-      </div>
-      <div class="modal-body">
-      		<div style="text-align: center;padding: 0px 0px 10px 0px">
-      			<img src="{{url_for('static', filename='background/join.jpeg')}}"/>
-      		</div>
-			<input type="text" class="form-control" id="phoneNumber" value="phone" autofocus>
-			<input type="text" class="form-control" id="targetName" value="name">
-			<button class="btn btn-primary" onclick="sendPhoneNumber()" style="width:100%">confirm</button>
       </div>
     </div>
   </div>
@@ -314,11 +266,6 @@
 						<div hidden id="roomInfo" class="col-sm-12 col-md-12">
 							<h1 style="margin:0;text-align: center"><span id="roomNumberLabel" class="label label-info"></span></h1>
 						</div>
-						<div class="col-sm-12 col-md-12" style="margin: 10px 0px 0px 0px">
-							<button type="button" class="btn btn-danger btn-lg button" data-toggle="modal" data-content="invite my friend!" data-target="#inviteModal" style="width:100%">
-							  Invite
-							</button>
-						</div>
 						<div class=" col-sm-12 col-md-12" style="margin: 10px 0px 0px 0px">
 							<button id="playListButton" type="button" class="btn btn-warning btn-lg" data-toggle="modal" onclick="resetHusky()" data-target="#playListModal" style="width:100%">
 							Choose A Video
@@ -329,19 +276,19 @@
 			</div>
 		</div>
 		<div id="ChatRoom" class="panel panel-default allTransparent">
-			<div class="panel-heading">
+			<div class="panel-heading" style="height:300px">
 				<h3 class="ui header">
-				  Chat
-				</h3>
-			</div>
+  Chat
+</h3>
+</div>
 			<div id="event-table" class="panel-body">
-				<div id="scrollable" style="overflow: scroll;height: 300px; margin: 0px 0px 10px 5px">
+				<div id="scrollable" style="overflow: scroll;max-height: 300px; margin: 0px 0px 10px 5px">
 					<div id="chat-wrapper" class="col-sm-12 col-md-12 col-lg-12">
 						<div id="chatresponse" class="ui comments"></div>
 					</div>
 				</div>
 				<div class=" col-sm-9 col-md-9 " style="padding:0px 0px">
-					<input type="text" class="form-control" id="chat_message" placeholder="Chat with your friend!" onkeydown="pressToSend(event)">
+					<input type="text" class="form-control" id="chat_message" onkeydown="pressToSend(event)">
 				</div>
 				<div class=" col-sm-2 col-md-2 " style="padding:0 0 0 5%">
 					<button class="btn btn-primary" onclick="sendMessage()">Send</button>
@@ -352,7 +299,7 @@
 	<div id="video-window" class="col-sm-9 col-md-9" style="padding:5px;height:100%">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 id="alertInfo" class="ui header">Movie</h3>
+				<a href="#" onclick="toggleVideo()">Movie</a>
 			</div>
 			<div id="event-table" class="panel-body" style="padding:0px">
 				<div id="player"></div>
@@ -438,30 +385,13 @@
 		player.loadVideoById(id, startTime);
 		player.pauseVideo();
 	}
-	function alertDrag(){
-		var al = document.getElementById('alertInfo');
-		al.innerHTML= 'Movie'+' (My friend is draging!)';
-	}
-	function alertcancel(){
-		var al = document.getElementById('alertInfo');
-		al.innerHTML= 'Movie';
-	}
-	function setDragInfo(){
-		alertDrag();
-		setTimeout(alertcancel, 1000);
-	}
-	function sendPhoneNumber(){
-		var room = document.getElementById("room_number").value;
-		var phonenumber = document.getElementById('phoneNumber').value;
-		socket.emit('waiting for invitation',{room:room,number:phonenumber});
-	}
 	//setInterval(function(){ alert("Hello"); }, 3000);/
 	var transp = 0;
 	var flag=true;
 	setInterval(function(){
 		var color = 'rgba(0, 0, 0,'
-		if(transp>0.05){flag=false;}
-		if(transp<0){flag=true;}
+		if(transp>0.5){flag=false;}
+		if(transp<0.2){flag=true;}
 		if(flag){
 			transp=transp+0.01*Math.random();
 		}else{

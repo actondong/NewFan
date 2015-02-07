@@ -41,19 +41,29 @@
 	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
-
-			<a class="navbar-brand" href="/"><font size="8">FunSee</font></a>
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">FunSee</a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
-
+			<div class="navbar-form navbar-left">
+				<ul id="nav" class="nav nav-tabs">
+					<li id="homePage" role="presentation" class="active"><a
+						href="#" onclick="setHomePage()">Cinema</a></li>
+				</ul>
+			</div>
 			<div class="navbar-form navbar-right">
 				{% if not session.logged_in %}
 				<div class="form-group" id="undiv">
-					<input type="text" pattern='[\+]\d{2}[\(]\d{2}[\)]\d{4}[\-]\d{4}' class="form-control" id="username"
-						placeholder="Phone Number">
+					<input type="text" class="form-control" id="username"
+						placeholder="Username(Email)">
 				</div>
 				<div class="form-group" id="pwdiv">
 					<input type="password" class="form-control" id="password"
@@ -92,8 +102,8 @@
       <div class="modal-body">
 	
 	<form class="form-signin" id="signupform">
-        <label for="inputEmail" class="sr-only">Phone Number</label>
-        <input type="tel" pattern='[0-9]{10}'  id="inputEmail" class="form-control" placeholder="Phone Number (10 digits)" required autofocus><p></p>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus><p></p>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" id="inputPassword" class="form-control" placeholder="Password" required><p></p>
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="hahahasignup">Sign Up</button>
@@ -103,7 +113,7 @@
   <div class="header">
     We're sorry we can't create that account
   </div>
-  <p>The phone number is used.
+  <p>The username(emial) is used.
 </p></div>
 
 <div class="ui success message" id='signupsuccess'>
