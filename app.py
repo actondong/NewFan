@@ -15,6 +15,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 roomCurrTime={}
+targetUrl = '160.39.236.225:8080'
 @app.errorhandler(404)
 def page_not_found(error):
 	return "Sorry, this page was not found.", 404
@@ -97,7 +98,7 @@ def invitation(message):
     twilioID = 'AC336052c209d59ff6da54f40127b309c0'
     token = '403e4ce7e10d41559201cfdb973997f3'
     client = TwilioRestClient(twilioID,token)
-    message = client.messages.create(body="http://160.39.236.225:8080/confirmInvitation/"+number+"+"+room,
+    message = client.messages.create(body="http://"+targetUrl+"/confirmInvitation/"+number+"+"+room,
     to="+1"+number,
     from_="+18628998914")
     print message.sid
