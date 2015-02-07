@@ -253,7 +253,7 @@
       		<div style="text-align: center;padding: 0px 0px 10px 0px">
       			<img src="{{url_for('static', filename='background/join.jpeg')}}"/>
       		</div>
-			<input type="text" class="form-control" id="room_number" autofocus>
+			<input type="text" placeholder="My Friend's Room Number" class="form-control" id="room_number" autofocus>
 			<button class="btn btn-primary" onclick="requestJoin()" style="width:100%">confirm</button>
       </div>
     </div>
@@ -269,7 +269,7 @@
       </div>
       <div class="modal-body">
       		<div style="text-align: center;padding: 0px 0px 10px 0px">
-      			<img src="{{url_for('static', filename='background/join.jpeg')}}"/>
+      			<img src="{{url_for('static', filename='background/invite.jpeg')}}"/>
       		</div>
 			<input type="text" class="form-control" id="phoneNumber" placeholder="Enter the phone number" autofocus>
 			<p></p>
@@ -370,10 +370,10 @@
 				<div id="underDiv">
 					<div id="headHeight" class="col-sm-3 col-md-3" style="padding:2px" >
 					<button id="fullScreen" inline class="btn btn-primary" style="width:100%" onclick="fullMode()"> Click Me For Full Screen </button>
-					<button hidden id="exitFullScreen" inline class="btn btn-primary" style="width:100%" onclick="exitFullMode()"> Click Me To Exit </button>
+					<button hidden id="exitFullScreen" inline class="btn btn-danger" style="width:100%" onclick="exitFullMode()"> Click Me To Exit </button>
 					</div>
 					<div class="col-sm-9 col-md-9" style="padding:2px">
-					<input type="text" class="form-control" id="flyingText" placeholder="Chat with your friend!" onkeydown="pressToSendText(event)">
+					<input type="text" class="form-control" id="flyingText" placeholder="Flying Message!" onkeydown="pressToSendText(event)">
 					</div>
 				</div>
 			</div>
