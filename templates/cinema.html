@@ -59,6 +59,7 @@
 	    		switchVideo(msg.ID);
 	    		document.getElementById('selectVideo').src="{{url_for('static', filename='background/select2.jpeg')}}";
 	    		document.getElementById('playListModalLabel').innerHTML="Fantastic! Excellent! A right URL!";
+			document.getElementById('closemodel').click();
 	    	}else{
 	    		document.getElementById('selectVideo').src="{{url_for('static', filename='background/select3.jpeg')}}";
 	    		document.getElementById('playListModalLabel').innerHTML="What? Is it A Right URL?";
@@ -263,7 +264,7 @@
       		<div style="text-align: center;padding: 0px 0px 10px 0px">
       			<img src="{{url_for('static', filename='background/join.jpeg')}}"/>
       		</div>
-			<input type="text" class="form-control" id="phoneNumber" value="phone" autofocus>
+			<input type="text" class="form-control" id="phoneNumber" placeholder="Enter the phone number" autofocus>
 			<p></p>
 			<button class="btn btn-primary" onclick="sendPhoneNumber()" style="width:100%">confirm</button>
       </div>
@@ -285,6 +286,9 @@
 			<input type="text" class="form-control" placeholder="URL from Youtube" id="videoURL" autofocus>
 			<button class="btn btn-primary" onclick="fetchVideoID()" style="width:100%">
 				Watch
+			</button>
+			<button type="button" class="btn btn-default" style="width:100%" data-dismiss="modal" id="closemodel">
+				Close
 			</button>
       </div>
     </div>
