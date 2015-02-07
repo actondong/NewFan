@@ -7,7 +7,7 @@
 		}
 		var userName ='{{myUserName}}';
 		var namespace = '/test';
-	  	var socket = io.connect('http://160.39.236.225:8080'+namespace);
+	  	var socket = io.connect('http://localhost:8080'+namespace);
 	  	var identifier = Math.random();
 	  	var host = false;
 	  	var currVideo = null;
@@ -264,7 +264,7 @@
       			<img src="{{url_for('static', filename='background/join.jpeg')}}"/>
       		</div>
 			<input type="text" class="form-control" id="phoneNumber" value="phone" autofocus>
-			<input type="text" class="form-control" id="targetName" value="name">
+			<p></p>
 			<button class="btn btn-primary" onclick="sendPhoneNumber()" style="width:100%">confirm</button>
       </div>
     </div>

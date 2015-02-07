@@ -14,11 +14,17 @@ def check_user_exist(a):
 def check_user_password_right(a,b):
 	return collection.find_one({'username':a,'password':b})!=None
 
-def add_user(a,b):
+def add_user(a,b,c):
 	if check_user_exist(a):
 		return False
-	collection.insert({'username':a,'password':b,'friends':[],'movies':[]})
+	collection.insert({'username':a,'password':b,'name':c,'friends':[],'movies':[]})
 	return True
+
+def get_user_name(a):
+	if not check_user_exist(a):
+		return False
+	tmp_user=collection.find_one({'username':a})
+	return tmp_user['name']
 
 def get_friends(a):
 	if not check_user_exist(a):
