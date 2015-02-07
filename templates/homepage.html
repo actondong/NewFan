@@ -779,6 +779,12 @@ var vcuExtensionConfig = {
      -> Extend the established blocks in admin/admin.html and other templates.
     -->
 <title>FanSee</title>
+<link rel="stylesheet" type="text/css" media="screen"
+    href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
+<link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='css/semantic.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='css/background.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='css/back2.css')}}" rel="stylesheet">
 <link href="http://fonts.googleapis.com/css?family=Lato:300,400"
     rel="stylesheet" type="text/css">
 <link
@@ -3529,7 +3535,7 @@ nav {
     top: 0;
     bottom: 0;
     width: 18rem;
-    background-color: #282828;
+    background-color: #663366;
     color: white;
     z-index: 1000;
     height: 100%;
@@ -6883,15 +6889,7 @@ table {
          data-page="1"
          style="background-image:url(/static/background/comeon.gif);background-size:100% 110%">
     </div>
-    <div class="background with-nav hidden"
-         data-page="10"
-         style="background-image:url(/static/background/chronosour.jpg)">
-         <div class="scrim">
-             <div class="fading-logo">
-                <i style="background-image: url(/static/background/host.jpeg);"></i>
-             </div>
-         </div>
-    </div>
+   
 </div>
 <div class="pages" id="top">
     
@@ -6904,14 +6902,15 @@ table {
         <div class="inner"><div class="header white no-spacer fixed" id="">
     <h1 class="title">
         <a href="/">
-            <span class="bold">FanSee</span>
+            <span class="bold">FanCee</span>
         </a>
-    </h1><h3 class="subtitle">Enjoy A Video With Friends <ul class="adjectives">
+    </h1><h3 class="subtitle"><font size = "5">Enjoy A Video With Friends </font>
+                    <ul class="adjectives">
                     <li class="adjective active" data-no="1">Happily</li>
-                    <li class="adjective" data-no="2">closely</li>
-                    <li class="adjective" data-no="3">synchronously</li>
-                    <li class="adjective" data-no="4">unprecedentedly</li>
-                    <li class="adjective" data-no="5">fancifully</li>
+                    <li class="adjective" data-no="2">Closely</li>
+                    <li class="adjective" data-no="3">Synchronously</li>
+                    <li class="adjective" data-no="4">Unprecedentedly</li>
+                    <li class="adjective" data-no="5">Fancifully</li>
                 </u></h3>
     <h4 class="date hidden-phone">A DevFest HackaThon Product&nbsp;&nbsp;|&nbsp;&nbsp;SEAS&nbsp;&nbsp;|&nbsp;&nbsp;Columbia</h4>
     <h4 class="date phone-only">SEAS</h4>
@@ -6929,11 +6928,12 @@ table {
                 </div>
             </div>
             <div class="sub-page centered" id="about">
-                <p class="focus focus-centered fade-out">If you've ever wanted to build an app, <br class="hidden-desktop"><strong>now's the time to learn</strong>.</p>
-                <p class="focus focus-centered fade-out">DevFest is Columbia's week-long workshop series and hackathon.  DevFest is about <strong>learning, community, and building amazing things with technology</strong>.</p>
+                <p class="focus focus-centered fade-out">Want to share videos with someone special <br class="hidden-desktop"><strong>far away?</strong></p>
+                <p class="focus focus-centered fade-out"> Distance won't matter anymore. <br class="hidden-desktop"></strong></p>
 
+  <p class="focus focus-centered fade-out"> Just watch as if you are watching together <br class="hidden-desktop"></strong></p>
                 <div class="scroll-down animated">
-                    <a class="scroll" href="#schedule">
+                    <a class="scroll" href="#demo">
                         <p class="fade-out">Get the Details</p>
                         <p><i class="fa fade-out fa-chevron-down"></i></p>
                     </a>
@@ -6942,218 +6942,68 @@ table {
         </div>
     </div>
    
-   
-   
-   
-   
-    
-    
-    
-    <div id="schedule" class="page blue with-nav" data-page="2">
+
+<div id="demo" class="page white with-nav" data-page="2">  <nav>
+    <a class="ham hidden-desktop">
+        <span class="bar one"></span>
+        <span class="bar two"></span>
+        <span class="bar three"></span>
+    </a>
+    <div class="outer">
         <div class="inner">
-            <div class="header white" id="">
-    <h1 class="title">
-        <a href="/">
-            <span class="bold">Demo</span>page1
-        </a>
-    </h1></div>
-<div class="header-spacer ">
-</div>
-            <div class="featured-faqs"><div class="faq">
-                        <h2></h2>
-                        <h3></h3>
-                    </div></div>
-            <div class="faqs"><div class="two-faqs">
-                        <div class="faq">
-                            <h5></h5>
+            <div class="logo">
+                <a class="scroll">
+                    <img src="/static/background/host.jpeg">
+                </a>
+            </div>
+            <ul class="menu">
+    
                 
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                           
-                        </div><div class="faq">
-                           
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                            
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                           
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                            
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div></div>
-        </div>
+                <li><a class="scroll" href="http://flask.pocoo.org/"><p>Flask</p></a></li>
+                <li><a class="scroll" href="http://flask.pocoo.org/"><p>Ninja 2</p></a></li>
+                <li><a class="scroll" href="http://www.mongodb.com/"><p>Mongo DB</p></a></li>
+                <li><a class="scroll" href="https://www.twilio.com/"><p>Twilio API</p></a></li>
+                <li><a class="scroll" href="https://developers.google.com/youtube/"><p>YouTube API</p></a></li>
+                <li><a href="#"><p>Clound Background</p></a></li>
+                <li><a class="scroll" href="#"><p>DevFest2015 CSS/JS</p></a></li>  
+                 <li><a class="scroll" href="#register">
+                         <p> FanSee Today</p>
+                    </a></li>
+            </ul>
+
     </div>
+</nav>
 
-
-    <div id="schedule" class="page blue with-nav" data-page="3">
-        <div class="inner">
-            <div class="header white" id="">
-    <h1 class="title">
-        <a href="/">
-            <span class="bold">Demo</span>page1
-        </a>
-    </h1></div>
-<div class="header-spacer ">
-</div>
-            <div class="featured-faqs"><div class="faq">
-                        <h2></h2>
-                        <h3></h3>
-                    </div></div>
-            <div class="faqs"><div class="two-faqs">
-                        <div class="faq">
-                            <h5></h5>
-                
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                           
-                        </div><div class="faq">
-                           
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                            
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                           
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                            
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div></div>
-        </div>
-    </div>
-
-
-<div id="schedule" class="page blue with-nav" data-page="4">
-        <div class="inner">
-            <div class="header white" id="">
-    <h1 class="title">
-        <a href="/">
-            <span class="bold">Demo</span>page1
-        </a>
-    </h1></div>
-<div class="header-spacer ">
-</div>
-            <div class="featured-faqs"><div class="faq">
-                        <h2></h2>
-                        <h3></h3>
-                    </div></div>
-            <div class="faqs"><div class="two-faqs">
-                        <div class="faq">
-                            <h5></h5>
-                
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                           
-                        </div><div class="faq">
-                           
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                            
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                           
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div><div class="two-faqs">
-                        <div class="faq">
-                            
-                        </div><div class="faq">
-                            
-                        </div>
-                    </div></div>
-        </div>
-    </div>
-
-<div id="judges" class="page white with-nav" data-page="5">
         <div class="inner">
             <div class="header blue" id="">
     <h1 class="title">
         <a href="/">
-            <span class="bold">Demo</span>back2
+            Why<span class="bold">FanCee?</span>
         </a>
     </h1></div>
 <div class="header-spacer ">
 </div>
-            <div class="judges">
-                <div class="three-judges">
-                    <div class="judge">
-    <img src="/static/img/judges/peter_boyce.jpg">
-    <h2>Peter Boyce</h2>
-    <p>Peter Boyce II is the co-founder of <a href='http://roughdraft.vc/'>Rough Draft Ventures</a> and an associate at <a href='http://www.generalcatalyst.com/'>General Catalyst Partners</a>, a venture capital firm where he focuses on investments in early-stage technology startups. Prior to this, he worked at NYC-based online education marketplace, <a href='http://www.skillshare.com/'>Skillshare</a>, and was an analyst at <a href='http://en.wikipedia.org/wiki/Bad_Boy_Records'>Bad Boy Entertainment</a>. Peter is a graduate of Harvard University, earning a B.A. in Applied Mathematics and a Secondary in Computer Science.</p>
-</div>
-                    <div class="judge">
-    <img src="/static/img/judges/sabrina_majeed.jpg">
-    <h2>Sabrina Majeed</h2>
-    <p>Sabrina Majeed is an <a href='https://dribbble.com/sabrina'>iOS designer and Product Design Manager</a> at Buzzfeed and contributor to "<a href='https://modelviewculture.com/pieces/an-open-letter-on-feminism-in-tech'>An Open Letter on Feminism in Tech</a>" with other women technologists. She previously worked as a Product Designer at Venmo and on the <a href='https://itunes.apple.com/us/app/weave/id444522442?mt=8'>Weave</a> app from Intuit. Sabrina graduated from Carnegie Mellon University with a degree in communication design and an additional major in human-computer interaction.</p>
-</div>
-                    <div class="judge">
-    <img src="/static/img/judges/ryan_bubinski.jpg">
-    <h2>Ryan Bubinski</h2>
-    <p>Ryan Bubinski is the co-founder and Chief Technical Officer of <a href='http://www.codecademy.com/'>Codecademy</a>, which was featured on Apple Inc.'s 30 years of Mac and is credited as the easiest way to learn how to code. He and his co-founder were a part of Y Combinator’s S11 class. Ryan graduated Columbia in 2011 where he studied Biophysics and Computer Science and helped start the Application Development Initiative.</p>
-</div>
-                </div>
-                <div class="two-judges">
-                    <div class="judge">
-    <img src="/static/img/judges/chris_wiggins.jpg">
-    <h2>Chris Wiggins</h2>
-    <p>Chris Wiggins is an associate professor of applied mathematics at Columbia University and the Chief Data Scientist at the New York Times. At Columbia he is a founding member of the Department of Systems Biology, the executive committee of the <a href='http://datascience.columbia.edu/'>Data Science Institute</a>, and the Institute’s education and entrepreneurship committees. He is a co-founder and co-organizer of <a href='http://hackny.org'>hackNY</a>, a nonprofit which since 2010 has organized once a semester student hackathons and the hackNY Fellows Program, a structured summer internship at NYC startups. Prior to joining the faculty at Columbia he was a Courant Instructor at NYU (1998-2001) and earned his PhD at Princeton University (1993-1998) in theoretical physics.</p>
-</div>
-                    <div class="judge">
-    <img src="/static/img/judges/grace_choi.jpg">
-    <h2>Grace Choi</h2>
-    <p>Grace Choi is an inventor and the creator of <a href='http://gracemink.com/'>Mink</a>, a desktop printing system that can instantly transform any image into a wearable color cosmetic. Her innovation experience includes a variety of industries and disciplines across organizations ranging from startups to multinational corporations. Grace holds a B.S. from Cornell University and an M.B.A. from Harvard Business School.</p>
-</div>
-                </div>
+            <div class="judges" align="center">
+               
+                   
+ <iframe frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" width="550" height="400" src="http://prezi.com/embed/2nnzrfn08k8u/?bgcolor=ffffff&amp;lock_to_path=0&amp;autoplay=0&amp;autohide_ctrls=0#"></iframe>
+
+
+ 
             </div>
         </div>
     </div>
    
    
-    <div id="kickoff" class="page blue with-image with-nav" data-page="6">
-        <div class="inner">
-            <div class="header white" id="">
+    <div id="kickoff" class="page white with-image with-nav" data-page="4">
+        <div class="inner" style="">
+            <div class="header white" id="" >
     <h1 class="title">
         <a >
-            <p class="focus focus-centered fade-out">
-                    <a class="white-inverse button" href="#register">
-                        FanSee Today
-                    </a>
+            <p class="focus focus-centered fade-out" >
+                  
             </p>
-        </a>
+        </a>   
     </h1></div>
 <div class="header-spacer ">
 </div>
