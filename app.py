@@ -6,6 +6,7 @@ import requests
 import sys
 from flask.ext.socketio import join_room, leave_room
 from flask.ext.socketio import SocketIO, emit,send
+from twilio.rest import TwilioRestClient
 import db
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -21,6 +22,12 @@ def hello():
     		return render_template("cinema.html",myUserName=session['username'])
 	else:
 		return render_template("cinema.html",myUserName='Guest')
+
+@app.route('/confirmInvitation/<info>',  methods=['POST', 'GET'])
+def confirm(info):
+    phoneNumber,room = info.split('+')
+    socketio.emit('commit join', {'username': phoneNumber,'room':room}, namespace='/test')
+    return phoneNumber
 
 @app.route("/")
 def home():
@@ -66,7 +73,6 @@ def logout():
 	error = None
 	session.clear()
 	return redirect('/')
-
 @app.route("/search",methods=["GET","POST"])
 def search():
 	if request.method == "POST":
@@ -79,6 +85,18 @@ def search():
 @socketio.on('my event', namespace='/test')
 def test_message(message):
     emit('rome', {'data': 'romeeeee'},broadcast=True)
+
+@socketio.on('waiting for invitation', namespace='/test')
+def invitation(message):
+    number = message['number']
+    room = message['room']
+    twilioID = 'AC336052c209d59ff6da54f40127b309c0'
+    token = '403e4ce7e10d41559201cfdb973997f3'
+    client = TwilioRestClient(twilioID,token)
+    message = client.messages.create(body="http://160.39.236.225:8080/confirmInvitation/"+number+"+"+room,
+    to="+1"+number,
+    from_="+18628998914")
+    print message.sid
 
 @socketio.on('URL query', namespace='/test')
 def query(message):
