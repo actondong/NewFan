@@ -282,7 +282,7 @@
 </h3>
 </div>
 			<div id="event-table" class="panel-body" >
-				<div id="scrollable" style="overflow: scroll;height: 300px; max-height: 300px; margin: 0px 0px 10px 5px">
+				<div id="scrollable" style="overflow: scroll;height: 338px; max-height: 338px; margin: 0px 0px 10px 5px">
 					<div id="chat-wrapper" class="col-sm-12 col-md-12 col-lg-12">
 						<div id="chatresponse" class="ui comments"></div>
 					</div>
@@ -390,8 +390,8 @@
 	var flag=true;
 	setInterval(function(){
 		var color = 'rgba(0, 0, 0,'
-		if(transp>0.5){flag=false;}
-		if(transp<0.2){flag=true;}
+		if(transp>0.05){flag=false;}
+		if(transp<0){flag=true;}
 		if(flag){
 			transp=transp+0.01*Math.random();
 		}else{
