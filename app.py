@@ -23,7 +23,8 @@ def page_not_found(error):
 @app.route("/index")
 def hello():
 	if 'username' in session:
-    		return render_template("cinema.html",myUserName=session['username'])
+		name=db.get_user_name(session['username'])
+    		return render_template("cinema.html",myUserName=name)
 	else:
 		return render_template("cinema.html",myUserName='Guest')
 
@@ -37,7 +38,8 @@ def confirm(info):
 def home():
 
 	if 'username' in session:
-    		return render_template("cinema.html",myUserName=session['username'])
+		name=db.get_user_name(session['username'])
+    		return render_template("cinema.html",myUserName=name)
 	else:
             resp = twilio.twiml.Response()
             resp.message("Hello, Mobile Monkey")
@@ -64,7 +66,8 @@ def signup():
     error = None
     if request.method == 'POST':
         if db.add_user(request.json['username'],
-                       request.json['password']):
+                       request.json['password'],
+		       request.json['name']):
 		return jsonify(success=True)
         else:
             return jsonify(success=False)
