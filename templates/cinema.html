@@ -17,7 +17,6 @@
 	        //socket.emit('my event', {data: 'I\'m connected!'});
 	    });
 	    socket.on('commit join',function(msg){
-	    	alert(userName);
 	    	if(phoneNumber==msg.username){
 	    		document.getElementById("room_number").value=msg.room;
 	    		socket.emit('request join',{data: msg.room});
