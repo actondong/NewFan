@@ -8,7 +8,7 @@
 		var userName ='{{myUserName}}';
 		var phoneNumber = '{{myPhoneNumber}}';
 		var namespace = '/test';
-	  	var socket = io.connect('http://ec2-52-0-171-169.compute-1.amazonaws.com:8080'+namespace);
+	  	var socket = io.connect('127.0.0.1:5050'+namespace);
 	  	var identifier = Math.random();
 	  	var host = false;
 	  	var currVideo = null;
